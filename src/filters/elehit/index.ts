@@ -7,7 +7,7 @@ const STYLE: Record<'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G' | 'H', StyleData> = 
   A: { text: [0, 168, 255], background: [255, 255, 255], border: [0, 168, 255], size: 45 },
   B: { text: [255, 255, 255], background: [0, 168, 255], border: [255, 255, 255], size: 45 },
   C: { text: [0, 255, 255], background: [0, 0, 0], border: [0, 255, 255], size: 45 },
-  D: { text: [0, 255, 0], background: [0, 50, 0], border: [0, 255, 0], size: 45 },
+  D: { text: [0, 255, 100], background: [0, 0, 0], border: [0, 255, 100], size: 45 },
   E: { text: [0, 255, 0], background: [0, 0, 0], border: [0, 255, 0], size: 45 },
   F: { text: [210, 100, 100], background: [0, 0, 0], border: [210, 100, 100], size: 45 },
   G: { text: [100, 150, 210], background: [0, 0, 0], border: [100, 150, 210], size: 45 },
@@ -57,7 +57,7 @@ ${rule().baseType('Chaos Orb').icon('Orange', 'Circle').style(STYLE.B).customSou
 
 ${rule().baseType('Orb of Regret').icon('Orange', 'Square').style(STYLE.B).customSound(`${SOUND_FOLDER}regret.mp3`).compile()}
 
-# C Tier Currency
+# C Tier
 
 ${rule().baseType('Orb of Fusing').icon('Yellow', 'Diamond').style(STYLE.C).customSound(`${SOUND_FOLDER}fusing.mp3`).compile()}
 
@@ -184,15 +184,6 @@ ${rule().linkedSockets('=', 5).icon('Orange', 'Diamond').style(STYLE.B).customSo
 
 ## 4 Links
 
-# RRRR
-${rule().itemClass('Body Armours').socketGroup('==', 'RRRR').icon('Cyan', 'Diamond').style(STYLE.D).customSound(`${SOUND_FOLDER}4red_body.mp3`).compile()}
-
-${rule().itemClass('Gloves').socketGroup('==', 'RRRR').icon('Cyan', 'Diamond').style(STYLE.D).customSound(`${SOUND_FOLDER}4red_gloves.mp3`).compile()}
-
-${rule().itemClass('Boots').socketGroup('==', 'RRRR').icon('Cyan', 'Diamond').style(STYLE.D).customSound(`${SOUND_FOLDER}4red_boots.mp3`).compile()}
-
-${rule().itemClass('Helmets').socketGroup('==', 'RRRR').icon('Cyan', 'Diamond').style(STYLE.D).customSound(`${SOUND_FOLDER}4red_helm.mp3`).compile()}
-
 # RRRG
 ${rule().itemClass('Body Armours').socketGroup('==', 'RRRG').icon('Cyan', 'Diamond').style(STYLE.D).customSound(`${SOUND_FOLDER}3red1g_body.mp3`).compile()}
 
@@ -220,33 +211,6 @@ ${false ? rule().itemClass('Boots').socketGroup('==', 'RRGB').icon('Cyan', 'Diam
 
 ${false ? rule().itemClass('Helmets').socketGroup('==', 'RRGB').icon('Cyan', 'Diamond').style(STYLE.D).customSound(`${SOUND_FOLDER}4_link_helm.mp3`).compile() : ''}
 
-
-# BBBB
-${rule().itemClass('Body Armours').socketGroup('==', 'BBBB').icon('Cyan', 'Diamond').style(STYLE.D).customSound(`${SOUND_FOLDER}4b_body.mp3`).compile()}
-
-${rule().itemClass('Gloves').socketGroup('==', 'BBBB').icon('Cyan', 'Diamond').style(STYLE.D).customSound(`${SOUND_FOLDER}4b_gloves.mp3`).compile()}
-
-${rule().itemClass('Boots').socketGroup('==', 'BBBB').icon('Cyan', 'Diamond').style(STYLE.D).customSound(`${SOUND_FOLDER}4b_boots.mp3`).compile()}
-
-${rule().itemClass('Helmets').socketGroup('==', 'BBBB').icon('Cyan', 'Diamond').style(STYLE.D).customSound(`${SOUND_FOLDER}4b_helm.mp3`).compile()}
-
-# BBBR
-${rule().itemClass('Body Armours').socketGroup('==', 'BBBR').icon('Cyan', 'Diamond').style(STYLE.D).customSound(`${SOUND_FOLDER}3b1red_body.mp3`).compile()}
-
-${rule().itemClass('Gloves').socketGroup('==', 'BBBR').icon('Cyan', 'Diamond').style(STYLE.D).customSound(`${SOUND_FOLDER}3b1red_gloves.mp3`).compile()}
-
-${rule().itemClass('Boots').socketGroup('==', 'BBBR').icon('Cyan', 'Diamond').style(STYLE.D).customSound(`${SOUND_FOLDER}3b1red_boots.mp3`).compile()}
-
-${rule().itemClass('Helmets').socketGroup('==', 'BBBR').icon('Cyan', 'Diamond').style(STYLE.D).customSound(`${SOUND_FOLDER}3b1red_helm.mp3`).compile()}
-
-# BBBG
-${rule().itemClass('Body Armours').socketGroup('==', 'BBBG').icon('Cyan', 'Diamond').style(STYLE.D).customSound(`${SOUND_FOLDER}3b1g_body.mp3`).compile()}
-
-${rule().itemClass('Gloves').socketGroup('==', 'BBBG').icon('Cyan', 'Diamond').style(STYLE.D).customSound(`${SOUND_FOLDER}3b1g_gloves.mp3`).compile()}
-
-${rule().itemClass('Boots').socketGroup('==', 'BBBG').icon('Cyan', 'Diamond').style(STYLE.D).customSound(`${SOUND_FOLDER}3b1g_boots.mp3`).compile()}
-
-${rule().itemClass('Helmets').socketGroup('==', 'BBBG').icon('Cyan', 'Diamond').style(STYLE.D).customSound(`${SOUND_FOLDER}3b1g_helm.mp3`).compile()}
 
 # BBRG
 ${false ? rule().itemClass('Body Armours').socketGroup('==', 'BBRG').icon('Cyan', 'Diamond').style(STYLE.D).customSound(`${SOUND_FOLDER}4_link_body.mp3`).compile() : ''}
@@ -352,19 +316,7 @@ ${rule().itemClass('Gloves').linkedSockets('==', 4).areaLevel('<=', 53).baseArmo
 ${rule().itemClass('Boots').linkedSockets('==', 4).areaLevel('<=', 53).baseArmour('==', 0).baseES('>=', 1).baseEvasion('>=', 1).icon('Cyan', 'Diamond').style(STYLE.D).customSound(`${SOUND_FOLDER}4_link_evasion_e_s_boots.mp3`).compile()}
 ${rule().itemClass('Helmets').linkedSockets('==', 4).areaLevel('<=', 53).baseArmour('==', 0).baseES('>=', 1).baseEvasion('>=', 1).icon('Cyan', 'Diamond').style(STYLE.D).customSound(`${SOUND_FOLDER}4_link_evasion_e_s_helm.mp3`).compile()}
 
-# Energy Shield
-${rule().itemClass('Body Armours').linkedSockets('==', 4).areaLevel('<=', 53).baseArmour('==', 0).baseES('>=', 1).baseEvasion('==', 0).icon('Cyan', 'Diamond').style(STYLE.D).customSound(`${SOUND_FOLDER}4_link_e_s_body.mp3`).compile()}
-${rule().itemClass('Gloves').linkedSockets('==', 4).areaLevel('<=', 53).baseArmour('==', 0).baseES('>=', 1).baseEvasion('==', 0).icon('Cyan', 'Diamond').style(STYLE.D).customSound(`${SOUND_FOLDER}4_link_e_s_gloves.mp3`).compile()}
-${rule().itemClass('Boots').linkedSockets('==', 4).areaLevel('<=', 53).baseArmour('==', 0).baseES('>=', 1).baseEvasion('==', 0).icon('Cyan', 'Diamond').style(STYLE.D).customSound(`${SOUND_FOLDER}4_link_e_s_boots.mp3`).compile()}
-${rule().itemClass('Helmets').linkedSockets('==', 4).areaLevel('<=', 53).baseArmour('==', 0).baseES('>=', 1).baseEvasion('==', 0).icon('Cyan', 'Diamond').style(STYLE.D).customSound(`${SOUND_FOLDER}4_link_e_s_helm.mp3`).compile()}
-
 ## 3 Links
-
-# RRR
-${rule().itemClass('Body Armours').socketGroup('==', 'RRR').icon('Green', 'Diamond').areaLevel('<=', 33).style(STYLE.E).customSound(`${SOUND_FOLDER}3red_body.mp3`).compile()}
-${rule().itemClass('Gloves').socketGroup('==', 'RRR').icon('Green', 'Diamond').areaLevel('<=', 33).style(STYLE.E).customSound(`${SOUND_FOLDER}3red_gloves.mp3`).compile()}
-${rule().itemClass('Boots').socketGroup('==', 'RRR').icon('Green', 'Diamond').areaLevel('<=', 33).style(STYLE.E).customSound(`${SOUND_FOLDER}3red_boots.mp3`).compile()}
-${rule().itemClass('Helmets').socketGroup('==', 'RRR').icon('Green', 'Diamond').areaLevel('<=', 33).style(STYLE.E).customSound(`${SOUND_FOLDER}3red_helm.mp3`).compile()}
 
 # RRG
 ${rule().itemClass('Body Armours').socketGroup('==', 'RRG').icon('Green', 'Diamond').areaLevel('<=', 33).style(STYLE.E).customSound(`${SOUND_FOLDER}2red1g_body.mp3`).compile()}
@@ -390,31 +342,16 @@ ${rule().itemClass('Gloves').socketGroup('==', 'GGB').icon('Green', 'Diamond').a
 ${rule().itemClass('Boots').socketGroup('==', 'GGB').icon('Green', 'Diamond').areaLevel('<=', 33).style(STYLE.E).customSound(`${SOUND_FOLDER}2g1blue_boots.mp3`).compile()}
 ${rule().itemClass('Helmets').socketGroup('==', 'GGB').icon('Green', 'Diamond').areaLevel('<=', 33).style(STYLE.E).customSound(`${SOUND_FOLDER}2g1blue_helm.mp3`).compile()}
 
-# BBB
-${rule().itemClass('Body Armours').socketGroup('==', 'BBB').icon('Green', 'Diamond').areaLevel('<=', 33).style(STYLE.E).customSound(`${SOUND_FOLDER}3b_body.mp3`).compile()}
-${rule().itemClass('Gloves').socketGroup('==', 'BBB').icon('Green', 'Diamond').areaLevel('<=', 33).style(STYLE.E).customSound(`${SOUND_FOLDER}3b_gloves.mp3`).compile()}
-${rule().itemClass('Boots').socketGroup('==', 'BBB').icon('Green', 'Diamond').areaLevel('<=', 33).style(STYLE.E).customSound(`${SOUND_FOLDER}3b_boots.mp3`).compile()}
-${rule().itemClass('Helmets').socketGroup('==', 'BBB').icon('Green', 'Diamond').areaLevel('<=', 33).style(STYLE.E).customSound(`${SOUND_FOLDER}3b_helm.mp3`).compile()}
-
-# BBR
-${rule().itemClass('Body Armours').socketGroup('==', 'BBR').icon('Green', 'Diamond').areaLevel('<=', 33).style(STYLE.E).customSound(`${SOUND_FOLDER}2b1red_body.mp3`).compile()}
-${rule().itemClass('Gloves').socketGroup('==', 'BBR').icon('Green', 'Diamond').areaLevel('<=', 33).style(STYLE.E).customSound(`${SOUND_FOLDER}2b1red_gloves.mp3`).compile()}
-${rule().itemClass('Boots').socketGroup('==', 'BBR').icon('Green', 'Diamond').areaLevel('<=', 33).style(STYLE.E).customSound(`${SOUND_FOLDER}2b1red_boots.mp3`).compile()}
-${rule().itemClass('Helmets').socketGroup('==', 'BBR').icon('Green', 'Diamond').areaLevel('<=', 33).style(STYLE.E).customSound(`${SOUND_FOLDER}2b1red_helm.mp3`).compile()}
-
-# BBG
-${rule().itemClass('Body Armours').socketGroup('==', 'BBG').icon('Green', 'Diamond').areaLevel('<=', 33).style(STYLE.E).customSound(`${SOUND_FOLDER}2b1g_body.mp3`).compile()}
-${rule().itemClass('Gloves').socketGroup('==', 'BBG').icon('Green', 'Diamond').areaLevel('<=', 33).style(STYLE.E).customSound(`${SOUND_FOLDER}2b1g_gloves.mp3`).compile()}
-${rule().itemClass('Boots').socketGroup('==', 'BBG').icon('Green', 'Diamond').areaLevel('<=', 33).style(STYLE.E).customSound(`${SOUND_FOLDER}2b1g_boots.mp3`).compile()}
-${rule().itemClass('Helmets').socketGroup('==', 'BBG').icon('Green', 'Diamond').areaLevel('<=', 33).style(STYLE.E).customSound(`${SOUND_FOLDER}2b1g_helm.mp3`).compile()}
-
 # RGB
 ${rule().itemClass('Body Armours').socketGroup('==', 'RGB').icon('Green', 'Diamond').areaLevel('<=', 33).style(STYLE.E).customSound(`${SOUND_FOLDER}chrome_body.mp3`).compile()}
 ${rule().itemClass('Gloves').socketGroup('==', 'RGB').icon('Green', 'Diamond').areaLevel('<=', 33).style(STYLE.E).customSound(`${SOUND_FOLDER}chrome_gloves.mp3`).compile()}
 ${rule().itemClass('Boots').socketGroup('==', 'RGB').icon('Green', 'Diamond').areaLevel('<=', 33).style(STYLE.E).customSound(`${SOUND_FOLDER}chrome_boots.mp3`).compile()}
 ${rule().itemClass('Helmets').socketGroup('==', 'RGB').icon('Green', 'Diamond').areaLevel('<=', 33).style(STYLE.E).customSound(`${SOUND_FOLDER}chrome_helm.mp3`).compile()}
-${rule().itemClass('Helmets').socketGroup('==', 'RGB').icon('Green', 'Diamond').areaLevel('<=', 33).style(STYLE.E).customSound(`${SOUND_FOLDER}chrome_helm.mp3`).compile()}
 ${rule().itemClass('Shields').socketGroup('==', 'RGB').icon('Green', 'Diamond').areaLevel('<=', 33).style(STYLE.E).customSound(`${SOUND_FOLDER}chrome_shield.mp3`).compile()}
+
+# Remaining 3 Links
+${rule().linkedSockets('==', 3).areaLevel('<=', 33).icon('Green', 'Diamond').style(STYLE.E).size(40).compile()}
+
 
 ### Flasks
 
@@ -484,24 +421,21 @@ ${rule().itemClass('Helmets', 'Body Armours', 'Gloves', 'Boots').sockets('>=', 4
 # Evasion
 ${rule().itemClass('Helmets', 'Body Armours', 'Gloves', 'Boots').sockets('>=', 4).areaLevel('<=', 45).baseArmour('==', 0).baseES('==', 0).baseEvasion('>=', 1).icon('Cyan', 'Diamond').style(STYLE.D).compile()}
 
-# Energy Shield
-${rule().itemClass('Helmets', 'Body Armours', 'Gloves', 'Boots').sockets('>=', 4).areaLevel('<=', 45).baseArmour('==', 0).baseES('>=', 1).baseEvasion('==', 0).icon('Cyan', 'Diamond').style(STYLE.D).compile()}
-
 # Good Shields
-${rule().baseType('Painted Buckler', 'War Buckler').background(0, 50, 0).size(45).compile()}
+${rule().baseType('Painted Buckler', 'War Buckler').areaLevel('<=', 45).background(0, 50, 0).size(45).compile()}
 
 # Good 3 Sockets
-${rule().sockets('==', 3).itemClass('Helmets', 'Body Armours', 'Gloves', 'Boots').socketGroup('>=', 'RG', 'GR', 'GG', 'RR', 'BB').areaLevel('<=', 33).border(255, 0, 127).compile()}
+${rule().sockets('==', 3).itemClass('Helmets', 'Body Armours', 'Gloves', 'Boots').socketGroup('>=', 'RG', 'GR', 'GG').areaLevel('<=', 33).border(255, 0, 127).compile()}
 
 # Good 2 Sockets
-${rule().sockets('==', 2).itemClass('Helmets', 'Body Armours', 'Gloves', 'Boots').socketGroup('>=', 'RG', 'GR', 'GG', 'RR', 'BB').areaLevel('<=', 24).border(255, 127, 0).compile()}
+${rule().sockets('==', 2).itemClass('Helmets', 'Body Armours', 'Gloves', 'Boots').socketGroup('>=', 'RG', 'GR', 'GG', 'RR').areaLevel('<=', 24).border(255, 127, 0).compile()}
 
 ### Act 1
 
 # Weapons
-${rule().baseType('Stone Axe', 'Jade Chopper', 'Corroded Blade', 'Longsword', 'Tribal Maul').rarity('==', 'Rare').areaLevel('<=', 13).icon('Yellow', 'UpsideDownHouse').border(0, 255, 255).background(0, 25, 40).size(45).sound(3).compile()}
+${rule().baseType('Stone Axe', 'Driftwood Maul', 'Jade Chopper', 'Corroded Blade', 'Longsword', 'Tribal Maul').rarity('==', 'Rare').areaLevel('<=', 13).icon('Yellow', 'UpsideDownHouse').border(0, 255, 255).background(0, 25, 40).size(45).sound(3).compile()}
 
-${rule().baseType('Stone Axe', 'Jade Chopper', 'Corroded Blade', 'Longsword', 'Tribal Maul').rarity('<', 'Rare').areaLevel('<=', 13).icon('Cyan', 'UpsideDownHouse').border(0, 255, 255).size(45).compile()}
+${rule().baseType('Stone Axe', 'Driftwood Maul', 'Jade Chopper', 'Corroded Blade', 'Longsword', 'Tribal Maul').rarity('<', 'Rare').areaLevel('<=', 13).icon('Cyan', 'UpsideDownHouse').border(0, 255, 255).size(45).compile()}
 
 # Shields
 ${rule().itemClass('Shields').socketGroup('>=', 'RG', 'GR').baseES('==', 0).areaLevel('<=', 13).background(40, 20, 0).border(255, 68, 0).size(40).compile()}
@@ -510,6 +444,9 @@ ${rule().itemClass('Shields').baseES('==', 0).areaLevel('<=', 13).border(255, 68
 
 # One Hand Axes
 ${rule().baseType('Rusted Hatchet', 'Boarding Axe').icon('Cyan', 'UpsideDownHouse').border(0, 255, 255).size(45).compile()}
+
+# Ele Hit Axes & Swords
+${rule().baseType('Rusted Hatchet', 'Boarding Axe', "Siege Axe", "Tomahawk", "Cutlass", "Corsair Sword", "Sabre", "Jagged Foil", "Elegant Foil", "Fancy Foil", "Serrated Foil", "Spiraled Foil").rarity('==', 'Rare').icon('Cyan', 'UpsideDownHouse').text(0, 255, 255).border(0, 255, 255).size(45).compile()}
 
 # Momentum Colors
 ${rule().socketGroup('>=', 'RRG', 'RGR', 'GRR').areaLevel('<=', 16).icon('Orange', 'Kite').border(255, 0, 0).background(50, 0, 0).size(45).compile()}
