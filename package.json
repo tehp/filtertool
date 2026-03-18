@@ -16,8 +16,10 @@
     "typescript": "^5.2.2"
   },
   "dependencies": {
+    "@elevenlabs/elevenlabs-js": "^2.39.0",
+    "axios": "^1.8.4",
     "dotenv": "^16.4.5",
     "fast-csv": "^5.0.2",
-    "axios": "^1.8.4"
+    "tiktok-tts": "^1.1.17"
   }
 }
