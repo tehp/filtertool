@@ -3,9 +3,12 @@ import { filterDefaults } from "../defaults"
 import { filterStyles, soundFile, styleMixin } from "../styles"
 import {
   applyHighlightTargets,
+  ARMOUR_CLASSES,
+  BuildProfile,
   compileRules,
   EarlyConfig,
   EarlySocketFallbacksConfig,
+  normalizeShieldProgressionConfig,
   SOCKETABLE_CLASSES,
   withHeading,
 } from "./helpers"
@@ -24,6 +27,9 @@ export const twilightStrand = () =>
 
 export const earlySocketFallbacks = ({ weaponItemClasses = [], weaponBaseTypes = [] }: EarlySocketFallbacksConfig = {}) => {
   const itemClasses = [...SOCKETABLE_CLASSES, ...weaponItemClasses]
+  const threeSocketMaxAreaLevel = filterDefaults.early.earlyMaxAreaLevel
+  const magicItemMaxAreaLevel = filterDefaults.early.magicItemMaxAreaLevel
+  const normalItemMaxAreaLevel = filterDefaults.early.normalItemMaxAreaLevel
 
   return withHeading(
     "Early Socket Fallbacks",
@@ -31,46 +37,46 @@ export const earlySocketFallbacks = ({ weaponItemClasses = [], weaponBaseTypes =
       rule()
         .sockets("==", 3)
         .itemClass(...itemClasses)
-        .areaLevel("<=", 16)
+        .areaLevel("<=", threeSocketMaxAreaLevel)
         .size(45),
       weaponBaseTypes.length > 0 &&
         rule()
           .sockets("==", 3)
           .baseType(...weaponBaseTypes)
-          .areaLevel("<=", 16)
+          .areaLevel("<=", threeSocketMaxAreaLevel)
           .size(45),
       rule()
         .socketGroup(">=", "G", "B", "R")
         .itemClass(...itemClasses)
-        .areaLevel("<=", 10)
+        .areaLevel("<=", magicItemMaxAreaLevel)
         .size(40),
       weaponBaseTypes.length > 0 &&
         rule()
           .socketGroup(">=", "G", "B", "R")
           .baseType(...weaponBaseTypes)
-          .areaLevel("<=", 10)
+          .areaLevel("<=", magicItemMaxAreaLevel)
           .size(40),
       rule()
         .rarity("==", "Magic")
         .itemClass(...itemClasses)
-        .areaLevel("<=", 10)
+        .areaLevel("<=", magicItemMaxAreaLevel)
         .size(40),
       weaponBaseTypes.length > 0 &&
         rule()
           .rarity("==", "Magic")
           .baseType(...weaponBaseTypes)
-          .areaLevel("<=", 10)
+          .areaLevel("<=", magicItemMaxAreaLevel)
           .size(40),
       rule()
         .rarity("==", "Normal")
         .itemClass(...itemClasses)
-        .areaLevel("<=", 4)
+        .areaLevel("<=", normalItemMaxAreaLevel)
         .size(40),
       weaponBaseTypes.length > 0 &&
         rule()
           .rarity("==", "Normal")
           .baseType(...weaponBaseTypes)
-          .areaLevel("<=", 4)
+          .areaLevel("<=", normalItemMaxAreaLevel)
           .size(40),
     ),
   )
@@ -81,8 +87,21 @@ export const early = ({
   earlyMaxAreaLevel = filterDefaults.early.earlyMaxAreaLevel,
   showRustic = filterDefaults.early.showRustic,
   includeMomentumColors = filterDefaults.early.includeMomentumColors,
+  momentumColors,
   momentumMaxAreaLevel = filterDefaults.early.momentumMaxAreaLevel,
-}: EarlyConfig) => {
+  shieldProgression,
+}: EarlyConfig & Partial<BuildProfile>) => {
+  const shieldConfig = normalizeShieldProgressionConfig(shieldProgression)
+  const defaultMomentumItemClasses = shieldConfig.enabled ? SOCKETABLE_CLASSES : ARMOUR_CLASSES
+  const momentumItemClasses = momentumColors?.itemClasses ?? defaultMomentumItemClasses
+  const momentumBaseTypes = momentumColors?.baseTypes
+  const effectiveMomentumMaxAreaLevel = momentumColors?.maxAreaLevel ?? momentumMaxAreaLevel
+  const buildMomentumRule = () =>
+    rule()
+      .socketGroup(">=", "RGG")
+      .areaLevel("<=", effectiveMomentumMaxAreaLevel)
+      .mixin(styleMixin(filterStyles.momentum))
+      .icon("Orange", "Kite")
   const buildWeaponHighlightRules = ({ baseTypes, itemClasses, maxAreaLevel = earlyMaxAreaLevel }: (typeof weaponHighlights)[number]) => {
     const buildBaseRule = (rarityOperator: "==" | "<") =>
       applyHighlightTargets(rule().rarity(rarityOperator, "Rare").areaLevel("<=", maxAreaLevel), { baseTypes, itemClasses })
@@ -118,12 +137,12 @@ export const early = ({
             .customSound(soundFile("rustic.mp3"))
           return builtRule
         })(),
-      includeMomentumColors &&
-        rule()
-          .socketGroup(">=", "RGG")
-          .areaLevel("<=", momentumMaxAreaLevel)
-          .mixin(styleMixin(filterStyles.momentum))
-          .icon("Orange", "Kite"),
+      ...(includeMomentumColors
+        ? [
+            momentumItemClasses.length > 0 && buildMomentumRule().itemClass(...momentumItemClasses),
+            momentumBaseTypes && momentumBaseTypes.length > 0 && buildMomentumRule().baseType(...momentumBaseTypes),
+          ]
+        : []),
     ),
   )
 }

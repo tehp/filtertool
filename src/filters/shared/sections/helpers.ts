@@ -168,6 +168,11 @@ export type EarlyConfig = {
   earlyMaxAreaLevel?: number
   showRustic?: boolean
   includeMomentumColors?: boolean
+  momentumColors?: {
+    itemClasses?: readonly ItemClass[]
+    baseTypes?: readonly BaseType[]
+    maxAreaLevel?: number
+  }
   momentumMaxAreaLevel?: number
 }
 

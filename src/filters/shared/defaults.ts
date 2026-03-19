@@ -23,6 +23,8 @@ export const filterDefaults = {
   },
   early: {
     earlyMaxAreaLevel: 12,
+    magicItemMaxAreaLevel: 10,
+    normalItemMaxAreaLevel: 4,
     showRustic: true,
     includeMomentumColors: true,
     momentumMaxAreaLevel: 20,

@@ -56,10 +56,14 @@ export const misc = () =>
   )
 
 export const hideEquipment = () =>
-  withHeading("Hide Equipment", compileRules(rule().itemClass(...REMAINING_EQUIPMENT_CLASSES).hide()))
+  withHeading(
+    "Hide Equipment",
+    compileRules(
+      rule()
+        .itemClass(...REMAINING_EQUIPMENT_CLASSES)
+        .hide(),
+    ),
+  )
 
 export const showUnknownItems = () =>
-  withHeading(
-    "Show Unknown Items",
-    compileRules(rule().mixin(styleMixin(filterStyles.unknownItem)).icon("Yellow", "Star").sound(7)),
-  )
+  withHeading("Show Unknown Items", compileRules(rule().mixin(styleMixin(filterStyles.unknownItem)).icon("Yellow", "Star").sound(7)))
