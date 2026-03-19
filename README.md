@@ -7,8 +7,7 @@ This tool is currently built with leveling filters in mind. Any Contributions th
 ## Prerequisites
 
 - [Node.js](https://nodejs.org/) installed
-- An IDE or editor of your choice
-- [Visual Studio Code](https://code.visualstudio.com/) recommended for the best autocomplete experience
+- An IDE or editor of your choice (recommend [Visual Studio Code](https://code.visualstudio.com/))
 
 ## Quickstart
 
