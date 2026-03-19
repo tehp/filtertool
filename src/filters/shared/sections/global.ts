@@ -1,7 +1,7 @@
 import rule from "../../../rule"
 import { filterStyles, styleMixin } from "../styles"
 import { DIV_CARD_HIDE_LIST } from "./div-cards"
-import { compileRules, withHeading } from "./helpers"
+import { compileRules, REMAINING_EQUIPMENT_CLASSES, withHeading } from "./helpers"
 
 export const uniques = () =>
   withHeading("Uniques", compileRules(rule().rarity("==", "Unique").icon("Brown", "Star").mixin(styleMixin(filterStyles.unique))))
@@ -35,7 +35,7 @@ export const divinationCards = () =>
         .icon("Green", "Circle")
         .mixin(styleMixin(filterStyles.divinationCard))
         .sound(2),
-      rule().itemClass("Divination Cards").mixin(styleMixin(filterStyles.divinationCard)).size(40),
+      rule().itemClass("Divination Cards").mixin(styleMixin(filterStyles.divinationCard)),
       rule()
         .baseType(...DIV_CARD_HIDE_LIST)
         .itemClass("Divination Cards")
@@ -53,4 +53,13 @@ export const misc = () =>
       rule().itemClass("Map Fragments", "Misc Map Items").style(filterStyles.fragments).icon("Purple", "Circle").sound(4),
       rule().itemClass("Sanctum Research", "Relics").style(filterStyles.relics).icon("Red", "UpsideDownHouse").sound(5),
     ),
+  )
+
+export const hideEquipment = () =>
+  withHeading("Hide Equipment", compileRules(rule().itemClass(...REMAINING_EQUIPMENT_CLASSES).hide()))
+
+export const showUnknownItems = () =>
+  withHeading(
+    "Show Unknown Items",
+    compileRules(rule().mixin(styleMixin(filterStyles.unknownItem)).icon("Yellow", "Star").sound(7)),
   )

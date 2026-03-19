@@ -31,10 +31,11 @@ export const filterStyles = {
   sixSocket:            { text: "#FFFFFF", background: "#00A800", border: "#FFFFFF", size: 45 },
   tincture:             { text: "#FFFFFF", background: "#46001E", border: "#EB1937", size: 45 },
   questItem:            { text: "#00FF00", background: "#000000", border: "#00FF00", size: 45 },
-  divinationCard:       { text: "#003200", background: "#000000", border: "#003200", size: 45 },
+  divinationCard:       { text: "#b8b8b8", background: "#000000", border: "#b8b8b8", size: 45 },
   maps:                 { text: "#FFFFFF", background: "#282828", border: "#FFFFFF", size: 45 },
   fragments:            { text: "#FF0032", background: "#000000", border: "#FF0032", size: 45 },
   relics:               { text: "#FF0032", background: "#280014", border: "#FF0032", size: 45 },
+  unknownItem:          { text: "#e100ff", background: "#000000", border: "#e100ff", size: 45 },
 } satisfies Record<string, StyleData>
 
 export const styleMixin =

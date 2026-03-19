@@ -1,4 +1,3 @@
-import rule from "../../rule"
 import {
   chromaticItems,
   currency,
@@ -7,6 +6,7 @@ import {
   earlySocketFallbacks,
   flasks,
   gems,
+  hideEquipment,
   highlightedEquipment,
   jewellery,
   joinSections,
@@ -16,6 +16,7 @@ import {
   questItems,
   rareItems,
   scrolls,
+  showUnknownItems,
   sixSockets,
   socketBases,
   tinctures,
@@ -45,5 +46,6 @@ export const getFilter = () =>
     questItems(),
     divinationCards(),
     misc(),
-    rule().hide().compile(),
+    hideEquipment(),
+    showUnknownItems(),
   )

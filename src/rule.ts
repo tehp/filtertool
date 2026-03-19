@@ -131,7 +131,7 @@ const rule = (...rules: Rule[]): Rule => {
       return this
     },
 
-    sound(id, volume = 300, positional = true) {
+    sound(id, volume = 300, positional = false) {
       this.content.set(`PlayAlertSound${positional ? 'Positional' : ''}`, `${id} ${volume}`)
       return this
     },

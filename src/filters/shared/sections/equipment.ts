@@ -284,7 +284,7 @@ export const jewellery = () =>
         .rarity("<=", "Rare")
         .icon("Red", "Moon")
         .mixin(styleMixin(filterStyles.rareAccessory))
-        .customSound(soundFile("sapphire.mp3")),
+        .customSound(soundFile("ruby.mp3")),
       rule()
         .baseType("Topaz")
         .itemClass("Rings")
@@ -292,7 +292,7 @@ export const jewellery = () =>
         .rarity("<=", "Rare")
         .icon("Yellow", "Moon")
         .mixin(styleMixin(filterStyles.rareAccessory))
-        .customSound(soundFile("sapphire.mp3")),
+        .customSound(soundFile("topaz.mp3")),
       rule()
         .baseType("Two-Stone")
         .itemClass("Rings")
