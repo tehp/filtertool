@@ -1,6 +1,7 @@
 import rule from "../../../rule"
 import { filterStyles, soundFile, styleMixin } from "../styles"
 import { buildTierCurrency, compileRules, joinSections, withHeading, withSubheading } from "./helpers"
+import { LEAGUESTART_CURRENCY_EXACT } from "./leaguestart-currency"
 
 export const currency = () => {
   const gold = withSubheading(
@@ -50,41 +51,10 @@ export const currency = () => {
   )
 
   const cTierCurrency = withSubheading(
-    "C Tier",
+    "Leaguestart Currency",
     compileRules(
       rule()
-        .baseType(
-          "Veiled Chaos Orb",
-          "Exalted Shard",
-          "Enkindling Orb",
-          "Instilling Orb",
-          "Glassblower's Bauble",
-          "Gemcutter's Prism",
-          "Cartographer's Chisel",
-          "Annulment Shard",
-          "Ancient Orb",
-          "Ancient Shard",
-          "Sacred Orb",
-          "Chaos Shard",
-          "Scouting Report",
-          "Blessed Orb",
-          "Orb of Horizons",
-          "Horizon Shard",
-          "Harbinger's Orb",
-          "Harbinger's Shard",
-          "Catalyst",
-          "Fossil",
-          "Oil",
-          "Splinter",
-          "Remnant of Corruption",
-          "Ichor",
-          "Ember",
-          "Lifeforce",
-          "Blessing",
-          "Alchemy Shard",
-          "Omen",
-          "Tattoo",
-        )
+        .baseTypeExact(...LEAGUESTART_CURRENCY_EXACT)
         .icon("Blue", "Circle")
         .mixin(styleMixin(filterStyles.priorityC)),
     ),
