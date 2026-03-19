@@ -22,18 +22,24 @@ export const buildSpecificOptions = {
       // Early 2-links you want to see.
       "RG",
       "GG",
+      // You can also target specific item classes or set a custom level cap.
+      // { pattern: "RB", itemClasses: ["Shields"], maxAreaLevel: 12 },
     ],
     threeLinkPatterns: [
       // 3-links for your build.
       "RRG",
       "RGG",
       "RGB",
+      // Example with an override for where the pattern should apply.
+      // { pattern: "GGB", itemClasses: ["Body Armours", "Gloves"], maxAreaLevel: 28 },
     ],
     fourLinkPatterns: [
       // 4-links for your build.
       "RRRG",
       "RRGG",
       "RGGG",
+      // Example with a custom level cap.
+      // { pattern: "RRRB", maxAreaLevel: 45 },
     ],
     // Optional override if you want different generic 4-links than `preferredArmourTypes`.
     // genericFourLinks: ["armour", "armour-evasion", "evasion"],
@@ -51,6 +57,8 @@ export const buildSpecificOptions = {
       // "Two Hand Axes",
       // "Two Hand Maces",
     ],
+    // You can also tune the general rare-item level caps.
+    // maxAreaLevel: 45,
   },
   tinctures: {
     baseTypes: [
@@ -70,14 +78,19 @@ export const buildSpecificOptions = {
         rarityOperator: "==",
         rarity: "Rare",
       },
+      // You can also attach a custom sound or builtin sound id.
+      // { baseTypes: ["Corroded Blade"], soundFileName: "pop.mp3", maxAreaLevel: 16 },
+      // { itemClasses: ["Two Hand Maces"], soundId: 1, maxAreaLevel: 16 },
     ],
   },
-  earlyActs: {
+  early: {
     weaponHighlights: [
       // Strong early weapon bases.
       { baseTypes: ["Stone Axe", "Driftwood Maul", "Corroded Blade"] },
       // You can also highlight a whole weapon class.
       { itemClasses: ["Two Hand Maces"] },
+      // And optionally give individual entries their own level cap.
+      // { baseTypes: ["Crude Bow"], maxAreaLevel: 10 },
     ],
     showRustic: true,
     includeMomentumColors: true,
@@ -88,5 +101,7 @@ export const buildSpecificOptions = {
       "Two Hand Axes",
       "Two Hand Maces",
     ],
+    // Optional specific bases for the same fallback rules.
+    // weaponBaseTypes: ["Stone Axe", "Driftwood Maul"],
   },
 } as const satisfies BuildSpecificOptions
