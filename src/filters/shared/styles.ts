@@ -23,7 +23,7 @@ export const filterStyles = {
   unique:               { text: "#FF4400", background: "#000000", border: "#FF4400", size: 45 },
   wisdom:               { text: "#ff7d4e", background: "#000000", border: "#ff7d4e", size: 45 },
   portal:               { text: "#6a94fd", background: "#000000", border: "#6a94fd", size: 45 },
-  gem:              { text: "#00FFFF", background: "#2D0014", border: "#00FFFF", size: 45 },
+  gem:                  { text: "#00FFFF", background: "#2D0014", border: "#00FFFF", size: 45 },
   chromatic:            { text: "#FFFFFF", background: "#003200", border: "#00A800", size: 40 },
   rareAccessory:        { text: "#FFFFFF", background: "#320046", border: "#C000FF", size: 45 },
   rareArmour:           { text: "#FFFF64", background: "#322800", border: "#FFFF64", size: 45 },

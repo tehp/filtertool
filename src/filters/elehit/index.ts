@@ -37,9 +37,9 @@ const buildSpecificOptions = {
   links: {
     earlyShields: buildProfile.earlyShields,
     twoLinkPatterns: ["RG", "GG"],
+    threeLinkPatterns: ["RRG", "RGG", "RGB"],
     fourLinkPatterns: ["RRRG", "RRGG", "RRGB", "RGGG", "RGGB", "RGBB"],
     genericFourLinks: ["armour", "armour-evasion", "armour-es", "evasion", "es-evasion"],
-    threeLinkPatterns: ["RRG", "RGG", "RGB"],
   },
   socketBases: {
     ...buildProfile,
