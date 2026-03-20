@@ -191,6 +191,7 @@ export type SoundFile =
   | "chrome_boots.mp3"
   | "chrome_gloves.mp3"
   | "chrome_helm.mp3"
+  | "chrome_recipe.mp3"
   | "chrome_shield.mp3"
   | "chrome_sword.mp3"
   | "chrome_whale.mp3"
