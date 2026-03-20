@@ -1,5 +1,11 @@
 #!/bin/sh
 set -e
 
-npm run format
-git add -u
+FILES=$(git diff --cached --name-only --diff-filter=ACMR | sed 's| |\\ |g')
+
+if [ -z "$FILES" ]; then
+  exit 0
+fi
+
+echo "$FILES" | xargs ./node_modules/.bin/prettier --ignore-unknown --write
+echo "$FILES" | xargs git add
