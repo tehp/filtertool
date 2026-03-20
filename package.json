@@ -5,9 +5,11 @@
   "main": "index.js",
   "scripts": {
     "export": "ts-node ./src/scripts/export.ts",
+    "export-all": "ts-node ./src/scripts/exportAll.ts",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "preexport": "npm run generate-types && npm run generate-sounds",
+    "preexport-all": "npm run generate-types && npm run generate-sounds",
     "generate-types": "ts-node ./src/scripts/generateTypes.ts",
     "generate-sounds": "ts-node ./src/scripts/generateSounds.ts"
   },
