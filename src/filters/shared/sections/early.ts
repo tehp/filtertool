@@ -112,14 +112,14 @@ export const early = ({
           .areaLevel("<=", earlyMaxAreaLevel)
           .mixin(styleMixin(filterStyles.earlyShieldLink)),
       shieldConfig.enabled &&
-        rule().itemClass("Shields").baseES("==", 0).areaLevel("<=", earlyMaxAreaLevel).mixin(styleMixin(filterStyles.earlyShieldBase)),
+        rule().itemClass("Shields").areaLevel("<=", earlyMaxAreaLevel).mixin(styleMixin(filterStyles.earlyShieldBase)),
       showRustic &&
         rule()
           .baseType("Rustic")
           .itemClass("Belts")
           .areaLevel("<=", earlyMaxAreaLevel)
           .icon("White", "Pentagon")
-          .mixin(styleMixin(filterStyles.rareJewellery))
+          .mixin(styleMixin(filterStyles.jewellery))
           .customSound(soundFile("rustic.mp3")),
       ...(includeMomentumColors
         ? [
