@@ -6,7 +6,4 @@ export const userFilterDefaults: DeepPartial<typeof baseFilterDefaults> = {
   // links: {
   //   twoLinkMaxAreaLevel: 12,
   // },
-  jewellery: {
-    amuletMaxAreaLevel: 24,
-  },
 }
