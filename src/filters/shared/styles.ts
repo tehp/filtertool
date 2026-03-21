@@ -1,5 +1,5 @@
 import type { Color, Mixin, Shape, StyleData } from "../../types"
-export { getSoundPackFolder, soundFile } from "../../sounds/paths"
+export { getSoundPackFolder, soundFile } from "../../sounds"
 import { loadOptionalOverride, mergeDeep } from "./user-overrides"
 
 export const DEFAULT_STYLE_SETTINGS = {

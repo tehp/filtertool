@@ -8,6 +8,7 @@ import {
   buildHighlightedBaseTypeRules,
   buildItemClassSocketRules,
   BuildProfile,
+  LEVELING_AMULETS,
   buildUtilityFlaskRules,
   ChromaticItemsConfig,
   compileRules,
@@ -20,6 +21,7 @@ import {
   MagicItemsConfig,
   NormalItemsConfig,
   normalizeGenericFourLinkConfig,
+  normalizeLevelingAmuletConfig,
   normalizeShieldProgressionConfig,
   normalizeSocketPatternConfig,
   RareItemsConfig,
@@ -44,18 +46,20 @@ export const links = ({
   shieldProgression,
 }: LinksConfig & Partial<BuildProfile>) => {
   const shieldConfig = normalizeShieldProgressionConfig(shieldProgression)
+  const shieldProgressionMode = getShieldProgressionMode(shieldProgression)
   const genericFourLinkEntries = genericFourLinks ?? preferredArmourTypes ?? []
-  const shieldThreeLinkRule =
-    shieldConfig.enabled &&
-    buildItemClassSocketRules({
-      linkedSockets: 3,
-      pattern: "RGG",
-      itemClasses: ["Shields"],
-      soundPrefix: getSocketPatternSoundPrefix("RGG"),
-      iconColor: "Green",
-      maxAreaLevel: shieldConfig.maxAreaLevel,
-      style: styleMixin(filterStyles.selectedThreeLink),
-    })
+  const shieldThreeLinkRules =
+    shieldProgressionMode === "full"
+      ? buildItemClassSocketRules({
+          linkedSockets: 3,
+          pattern: "RGG",
+          itemClasses: ["Shields"],
+          soundPrefix: getSocketPatternSoundPrefix("RGG"),
+          iconColor: "Green",
+          maxAreaLevel: shieldConfig.maxAreaLevel,
+          style: styleMixin(filterStyles.selectedThreeLink),
+        })
+      : []
 
   return withHeading(
     "Links",
@@ -98,7 +102,7 @@ export const links = ({
           style: styleMixin(filterStyles.selectedThreeLink),
         })
       }),
-      ...((shieldThreeLinkRule as ReturnType<typeof buildItemClassSocketRules> | false) || []),
+      ...shieldThreeLinkRules,
       genericThreeLinks &&
         rule()
           .linkedSockets("==", 3)
@@ -110,14 +114,15 @@ export const links = ({
       ...twoLinkPatterns.map((entry) => {
         const { pattern, maxAreaLevel, itemClasses } = normalizeSocketPatternConfig<TwoLinkPattern>(entry)
         const effectiveItemClasses = itemClasses ?? ARMOUR_CLASSES
+        const effectiveMaxAreaLevel = maxAreaLevel ?? twoLinkMaxAreaLevel
         const builtRule = rule()
           .itemClass(...effectiveItemClasses)
           .socketGroup("==", pattern)
           .icon("Green", "Diamond")
           .mixin(styleMixin(filterStyles.selectedTwoLink))
 
-        if (maxAreaLevel ?? twoLinkMaxAreaLevel) {
-          builtRule.areaLevel("<=", maxAreaLevel ?? twoLinkMaxAreaLevel!)
+        if (effectiveMaxAreaLevel !== undefined) {
+          builtRule.areaLevel("<=", effectiveMaxAreaLevel)
         }
 
         return builtRule
@@ -147,7 +152,7 @@ export const jewellery = ({
   beltMaxAreaLevel = filterDefaults.jewellery.beltMaxAreaLevel,
   amuletMaxAreaLevel = filterDefaults.jewellery.amuletMaxAreaLevel,
 }: JewelleryConfig = {}) => {
-  const buildAmuletRules = (baseType: "Amber" | "Lapis" | "Jade", soundFileName: string) =>
+  const buildAmuletRules = (baseType: string, soundFileName: string) =>
     [
       { rarity: "Rare" as const, style: filterStyles.rareAccessory },
       { rarity: "Magic" as const, style: filterStyles.magicAccessory },
@@ -342,11 +347,12 @@ export const jewellery = ({
         .mixin(styleMixin(filterStyles.accessory))
         .customSound(soundFile("heavy_belt.mp3")),
       rule().itemClass("Belts").rarity("==", "Rare").mixin(styleMixin(filterStyles.accessory)),
-      ...(amulets.includes("Amber") ? buildAmuletRules("Amber", "amber.mp3") : []),
-      ...(amulets.includes("Lapis") ? buildAmuletRules("Lapis", "lapis.mp3") : []),
-      ...(amulets.includes("Jade") ? buildAmuletRules("Jade", "jade.mp3") : []),
+      ...amulets.flatMap((entry) => {
+        const { shortBaseType, soundFileName } = normalizeLevelingAmuletConfig(entry)
+        return buildAmuletRules(shortBaseType, soundFileName)
+      }),
       rule()
-        .baseType("Amber", "Jade", "Lapis", "Turquoise", "Onyx", "Agate", "Citrine")
+        .baseType(...Object.keys(LEVELING_AMULETS), "Turquoise", "Onyx", "Agate", "Citrine")
         .itemClass("Amulets")
         .rarity("==", "Rare")
         .mixin(styleMixin(filterStyles.rareAccessory)),

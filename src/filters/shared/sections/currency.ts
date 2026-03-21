@@ -1,6 +1,6 @@
 import rule from "../../../rule"
 import { filterStyles, soundFile, styleMixin } from "../styles"
-import { buildTierCurrency, compileRules, joinSections, withHeading, withSubheading } from "./helpers"
+import { buildTierCurrency, compileRules, withHeading, withSubheading } from "./helpers"
 import { LEAGUESTART_CURRENCY_EXACT } from "./leaguestart-currency"
 
 export const currency = () => {

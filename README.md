@@ -17,19 +17,28 @@ This tool is currently built with leveling filters in mind. Any Contributions ar
 npm install
 ```
 
-2. Set your Path of Exile filter folder in `.env`.
+2. Generate local type files and sound metadata.
+
+```bash
+npm run generate-types
+npm run generate-sounds
+```
+
+These generated files are intentionally not committed, so a fresh clone may not have full autocomplete until you run those commands.
+
+3. Set your Path of Exile filter folder in `.env`.
 
 ```env
 FILTER_PATH="C:\Users\user\Documents\My Games\Path of Exile"
 ```
 
-3. Copy [`src/filters/example`](src/filters/example) to a new folder under `src/filters/`.
+4. Copy [`src/filters/example`](src/filters/example) to a new folder under `src/filters/`.
 
-4. Edit [`config.ts`](src/filters/example/config.ts).
+5. Edit [`config.ts`](src/filters/example/config.ts).
 
 For most standard filters, `config.ts` is the only file you need to touch. [`index.ts`](src/filters/example/index.ts) usually only needs changes if you want a different section layout or custom logic.
 
-5. Export your filter.
+6. Export your filter.
 
 If your filter folder is `src/filters/yourfilter`, run:
 
@@ -41,7 +50,7 @@ This also regenerates the typed item/sound files and syncs the sound pack before
 
 ## User Overrides
 
-If you want personal defaults or styles without creating merge conflicts whenever the shared defaults change, you can add local override files that apply to all filters.
+If you want personal shared defaults or styles for all filters you can add local override files.
 
 - Create `src/filters/shared/user-defaults.ts` to override shared defaults
 - Create `src/filters/shared/user-styles.ts` to override shared styles
@@ -88,7 +97,7 @@ npm run generate-sounds
 
 - Most config fields have autocomplete for Path of Exile item classes, base types and link patterns
 - `soundFile("...")` also gets typed sound filename suggestions for literal filenames
-- Custom filter folders under `src/filters/` are gitignored by default, while the shared example template stays tracked
+- Custom filter folders under `src/filters/` are gitignored by default
 
 ---
 

@@ -68,16 +68,16 @@ export const buildSpecificOptions = {
     // genericFourLinks: ["armour", "armour-evasion", "evasion"],
   },
   jewellery: {
-    // Select which amulets are visible. Leave unset to show all three.
+    // Select which amulets are visible. Doesn't affect rare amulets
     amulets: ["Amber", "Lapis"],
+    // Optional override for leveling amulet cutoff.
+    // amuletMaxAreaLevel: 24,
     // Optional override for the low-level iron/coral ring cutoff.
     // basicRingMaxAreaLevel: 16,
     // Optional override for the sapphire/ruby/topaz/two-stone ring cutoff.
     // elementalRingMaxAreaLevel: 24,
     // Optional override for leather/heavy belt cutoff.
     // beltMaxAreaLevel: 24,
-    // Optional override for leveling amulet cutoff.
-    // amuletMaxAreaLevel: 24,
   },
   rareItems: {
     // Optional override for how long the rare-item section stays visible.
