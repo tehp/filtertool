@@ -1,8 +1,5 @@
 export type DivinationCards =
   | "House of Mirrors"
-  | "Desecrated Virtue"
-  | "The Journey"
-  | "The Messenger"
   | "The Doctor"
   | "The Fiend"
   | "Hunter's Reward"
@@ -454,4 +451,7 @@ export type DivinationCards =
   | "The Silly Boy"
   | "Reflection of the Heart"
   | "The Eye of Terror"
+  | "Desecrated Virtue"
+  | "The Journey"
+  | "The Messenger"
   | (string & {})
