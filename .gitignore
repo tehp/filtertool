@@ -17,6 +17,7 @@ dist/
 .vscode/
 *.swp
 *.swo
+.codex
 
 # Generated/local filter configs
 src/filters/*

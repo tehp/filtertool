@@ -521,7 +521,6 @@ export const rareItems = ({
   return withHeading(
     "Rare Items",
     compileRules(
-      rule().itemClass("Boots").rarity("==", "Rare").mixin(styleMixin(filterStyles.rareArmour)),
       ...preferredArmourTypes.map((baseType) =>
         rule()
           .itemClass(...preferredRareItemClasses)
