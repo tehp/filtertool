@@ -9,7 +9,7 @@ export const exportFilter = async (filterName: string, filterPath = process.env.
     throw new Error("No filter path set in environment variables.")
   }
 
-  const { getFilter } = await import(path.join(__dirname, "../filters", normalizedFilterName))
+  const { getFilter } = require(path.join(__dirname, "../filters", normalizedFilterName))
 
   if (!getFilter) {
     throw new Error("Invalid filter file.")

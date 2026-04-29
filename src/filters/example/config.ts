@@ -11,7 +11,7 @@ only need to set `links.goodFourLinks` if you want a different preferred 4-link 
 `preferredWeaponItemClasses` creates a dedicated preferred-weapons section for
 your leveling weapons. `preferredWeaponMinAps` can narrow that list further.
 
-`earlyWeapons` is a separate shared query for the early weapon highlight, early socket,
+`earlyWeapons` is a separate shared query for the early weapon highlight, early sockets,
 and momentum-color sections, including explicit base types. If `earlyWeapons` is omitted
 or left empty, those sections fall back to the preferred weapon query.
 Only set `early.momentumColors` if momentum colors should use a different weapon query.
@@ -100,6 +100,9 @@ export const buildSpecificOptions: BuildSpecificOptions = {
       // Set `weaponCutoffEnabled: false` if you want a weapon item class to stay highlighted indefinitely.
       // { itemClasses: ["Two Hand Axes"], weaponCutoffEnabled: false },
       // { baseTypes: ["Boarding Axe"], weaponCutoffEnabled: true, weaponCutoffOverlap: 8 },
+      // Socket groups can further narrow a highlight. Defaults to contains-match (">=").
+      // { itemClasses: ["Body Armours"], socketGroups: ["RGB"] },
+      // { itemClasses: ["Shields"], socketGroupOperator: ">=", socketGroups: ["RG"] },
       // You can also attach a custom sound or builtin sound id.
       // { baseTypes: ["Corroded Blade"], soundFileName: "pop.mp3", maxAreaLevel: 16 },
       // { itemClasses: ["Two Hand Maces"], soundId: 1, maxAreaLevel: 16 },
@@ -124,10 +127,6 @@ export const buildSpecificOptions: BuildSpecificOptions = {
     includeMomentumColors: true,
     // Optional override if your momentum colors should use a different target set.
     // momentumColors: { itemClasses: ["Two Hand Axes"], minAps: 1.3 },
-  },
-  earlySockets: {
-    // Enable the shared early 2-socket / 3-socket socket section.
-    // This always uses `buildProfile.earlyWeapons`, or the preferred weapon query if that is empty.
   },
   tinctures: {
     baseTypes: [

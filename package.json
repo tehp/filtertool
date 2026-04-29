@@ -2,7 +2,6 @@
   "name": "filter",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
   "scripts": {
     "typecheck": "tsc --noEmit",
     "check": "npm run typecheck && npm run format:check",

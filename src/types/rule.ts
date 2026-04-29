@@ -11,7 +11,7 @@ import {
   Operator,
   Rarity,
   Shape,
-} from "."
+} from "./index"
 
 export type HexColor = `#${string}`
 

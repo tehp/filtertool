@@ -7,10 +7,9 @@ import {
   BuildProfile,
   compileRules,
   EarlyConfig,
-  EarlySocketsConfig,
   normalizeShieldProgressionConfig,
-  resolveSharedWeaponQuery,
   resolveMixedItemClassWeaponQuery,
+  resolveSharedWeaponQuery,
   resolveWeaponBaseTypes,
   SOCKETABLE_CLASSES,
   withHeading,
@@ -28,11 +27,7 @@ export const twilightStrand = () =>
     ),
   )
 
-export const earlySockets = ({
-  earlyWeapons,
-  preferredWeaponItemClasses = [],
-  preferredWeaponMinAps,
-}: EarlySocketsConfig & Partial<BuildProfile> = {}) => {
+export const earlySockets = ({ earlyWeapons, preferredWeaponItemClasses = [], preferredWeaponMinAps }: Partial<BuildProfile> = {}) => {
   const resolvedEarlyWeapons = resolveSharedWeaponQuery({
     sharedWeapons: earlyWeapons,
     preferredWeaponItemClasses,
@@ -164,8 +159,7 @@ export const early = ({
           .socketGroup(">=", "RG")
           .areaLevel("<=", earlyMaxAreaLevel)
           .mixin(styleMixin(filterStyles.earlyShieldLink)),
-      shieldConfig.enabled &&
-        rule().itemClass("Shields").areaLevel("<=", earlyMaxAreaLevel).mixin(styleMixin(filterStyles.earlyShieldBase)),
+      shieldConfig.enabled && rule().itemClass("Shields").areaLevel("<=", 8).mixin(styleMixin(filterStyles.earlyShieldBase)),
       showRustic &&
         rule()
           .baseType("Rustic")

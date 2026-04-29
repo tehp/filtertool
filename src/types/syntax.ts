@@ -1,4 +1,4 @@
-import { Rule } from "."
+import { Rule } from "./index"
 
 export type Color = "Red" | "Green" | "Blue" | "Brown" | "White" | "Yellow" | "Cyan" | "Grey" | "Orange" | "Pink" | "Purple"
 

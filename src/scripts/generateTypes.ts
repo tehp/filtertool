@@ -73,6 +73,9 @@ const parseNumber = (value?: string) => {
 const isWeaponItemClass = (itemClass?: string): itemClass is WeaponItemClass =>
   !!itemClass && WEAPON_ITEM_CLASSES.includes(itemClass as WeaponItemClass)
 
+const hasRequiredBaseTypeFields = (row: BaseTypeRow): row is BaseTypeRow & { Class: string; BaseType: string } =>
+  typeof row.Class === "string" && row.Class.length > 0 && typeof row.BaseType === "string" && row.BaseType.length > 0
+
 export async function parseBaseTypes() {
   const baseTypesRaw: BaseTypeRow[] = []
   const itemClasses: Record<string, string[]> = {}
@@ -91,11 +94,13 @@ export async function parseBaseTypes() {
     .on("error", () => console.log("Error wile trying to generate types"))
     .on("end", async () => {
       for (const row of baseTypesRaw) {
-        if (!itemClasses[row.Class]) {
-          itemClasses[row.Class] = []
+        if (!hasRequiredBaseTypeFields(row)) {
+          continue
         }
 
-        itemClasses[row.Class].push(row.BaseType)
+        const itemClassEntries = itemClasses[row.Class] ?? []
+        itemClassEntries.push(row.BaseType)
+        itemClasses[row.Class] = itemClassEntries
       }
 
       // Generate path if not already there, delete all files if they exist

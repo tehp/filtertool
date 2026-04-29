@@ -23,8 +23,6 @@ export const joinSections = (...sections: string[]) =>
     .filter(Boolean)
     .join("\n\n")
 
-export const optionalSection = <T>(config: T | undefined, build: (config: T) => string) => (config ? build(config) : "")
-
 export const comment = (text: string, level: 1 | 2 | 3 = 1) => `${"#".repeat(level)} ${text}`
 
 export const withHeading = (heading: string, ...sections: string[]) => joinSections(comment(heading, 3), ...sections)
@@ -72,14 +70,13 @@ export type BuildProfile = {
 
 export type BuildSpecificOptions = {
   links: LinksConfig
-  jewellery?: JewelleryConfig
-  rareItems?: RareItemsConfig
-  magicItems?: MagicItemsConfig
-  normalItems?: NormalItemsConfig
-  tinctures?: TincturesConfig
-  highlightedEquipment?: HighlightedEquipmentConfig
-  early?: EarlyConfig
-  earlySockets?: EarlySocketsConfig
+  jewellery: JewelleryConfig
+  rareItems: RareItemsConfig
+  magicItems: MagicItemsConfig
+  normalItems: NormalItemsConfig
+  tinctures: TincturesConfig
+  highlightedEquipment: HighlightedEquipmentConfig
+  early: EarlyConfig
 }
 
 // Links
@@ -437,6 +434,8 @@ export type HighlightedBaseTypeConfig = {
   baseTypes?: readonly BaseType[]
   itemClasses?: readonly ItemClass[]
   minAps?: number
+  socketGroups?: readonly string[]
+  socketGroupOperator?: Operator
   weaponCutoffEnabled?: boolean
   weaponCutoffOverlap?: number
   rarityOperator?: Operator
@@ -498,6 +497,8 @@ const buildHighlightedRule = ({
   selectedRarity,
   baseTypes,
   itemClasses,
+  socketGroups,
+  socketGroupOperator = ">=",
   maxAreaLevel,
   soundId,
   soundFileName,
@@ -505,6 +506,8 @@ const buildHighlightedRule = ({
   selectedRarity?: Rarity
   baseTypes?: readonly BaseType[]
   itemClasses?: readonly ItemClass[]
+  socketGroups?: readonly string[]
+  socketGroupOperator?: Operator
   maxAreaLevel?: number
   soundId?: NumberRange<1, 17>
   soundFileName?: SoundFile
@@ -520,6 +523,10 @@ const buildHighlightedRule = ({
 
   if (maxAreaLevel !== undefined) {
     builtRule.areaLevel("<=", maxAreaLevel)
+  }
+
+  if (socketGroups?.length) {
+    builtRule.socketGroup(socketGroupOperator, ...socketGroups)
   }
 
   if (soundFileName) {
@@ -548,6 +555,8 @@ export const buildHighlightedBaseTypeRules = ({
   baseTypes,
   itemClasses,
   minAps,
+  socketGroups,
+  socketGroupOperator,
   weaponCutoffEnabled,
   weaponCutoffOverlap = 5,
   rarityOperator,
@@ -578,6 +587,8 @@ export const buildHighlightedBaseTypeRules = ({
         selectedRarity,
         baseTypes: resolvedBaseTypes.length > 0 ? resolvedBaseTypes : undefined,
         itemClasses: resolvedItemClasses,
+        socketGroups,
+        socketGroupOperator,
         maxAreaLevel,
         soundId,
         soundFileName,
@@ -603,6 +614,8 @@ export const buildHighlightedBaseTypeRules = ({
       buildHighlightedRule({
         selectedRarity,
         baseTypes: [baseType],
+        socketGroups,
+        socketGroupOperator,
         maxAreaLevel: effectiveMaxAreaLevel,
         soundId,
         soundFileName,
@@ -616,6 +629,8 @@ export const buildHighlightedBaseTypeRules = ({
             selectedRarity,
             baseTypes: nonWeaponBaseTypes.length > 0 ? nonWeaponBaseTypes : undefined,
             itemClasses: nonWeaponItemClasses?.length ? nonWeaponItemClasses : undefined,
+            socketGroups,
+            socketGroupOperator,
             maxAreaLevel,
             soundId,
             soundFileName,
@@ -741,8 +756,6 @@ export type EarlyConfig = {
   }
   momentumMaxAreaLevel?: number
 }
-
-export type EarlySocketsConfig = {}
 
 // Rare, magic, normal items, tinctures, and chromatics
 export type RareItemsConfig = {

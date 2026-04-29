@@ -25,7 +25,6 @@ export const mergeDeep = <T>(base: T, override: DeepPartial<T>): T => {
 
   return merged as T
 }
-
 export const loadOptionalOverride = <T>(modulePath: string, exportName: string): DeepPartial<T> => {
   try {
     const loadedModule = require(modulePath) as Record<string, DeepPartial<T> | undefined>

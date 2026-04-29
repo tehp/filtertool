@@ -31,7 +31,6 @@ export const buildSpecificOptions: BuildSpecificOptions = {
     showRustic: true,
     includeMomentumColors: true,
   },
-  earlySockets: {},
   tinctures: {
     baseTypes: [],
   },
