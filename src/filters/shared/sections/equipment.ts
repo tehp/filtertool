@@ -462,6 +462,7 @@ export const flasks = () =>
           { baseTypes: ["Giant Life Flask"], maxAreaLevel: 35, soundFileName: "giant_life.mp3" },
           { baseTypes: ["Colossal Life Flask"], maxAreaLevel: 40, soundFileName: "colossal_life.mp3" },
           { baseTypes: ["Hallowed Life Flask", "Divine Life Flask"], maxAreaLevel: 60, soundFileName: "life.mp3" },
+          { baseTypes: ["Divine Life Flask"], soundFileName: "life.mp3" },
         ],
       }),
       ...buildFlaskSeries({
