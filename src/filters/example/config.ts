@@ -104,8 +104,8 @@ export const buildSpecificOptions: BuildSpecificOptions = {
       // { itemClasses: ["Body Armours"], socketGroups: ["RGB"] },
       // { itemClasses: ["Shields"], socketGroupOperator: ">=", socketGroups: ["RG"] },
       // You can also attach a custom sound or builtin sound id.
-      // { baseTypes: ["Corroded Blade"], soundFileName: "pop.mp3", maxAreaLevel: 16 },
-      // { itemClasses: ["Two Hand Maces"], soundId: 1, maxAreaLevel: 16 },
+      // { baseTypes: ["Corroded Blade"], soundFileName: "pop.mp3", minAreaLevel: 12, maxAreaLevel: 16 },
+      // { itemClasses: ["Two Hand Maces"], soundId: 1, minAreaLevel: 12, maxAreaLevel: 16 },
     ],
   },
   jewellery: {
