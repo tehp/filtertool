@@ -5,19 +5,18 @@ import { type BuildProfile, type BuildSpecificOptions } from "../shared"
 only covers `armour` and `evasion`, while `["armour-evasion"]` only covers
 `armour-evasion`.
 
-`preferredArmourTypes` also feeds the "good" 4-link section by default, so you
-only need to set `links.goodFourLinks` if you want a different preferred 4-link mix.
+`preferredArmourTypes` combines with `links.prefColors` to give matching links
+the selected-link highlight. Links matching only a preferred color use the good-link highlight.
 
 `preferredWeaponItemClasses` creates a dedicated preferred-weapons section for
 your leveling weapons. `preferredWeaponMinAps` can narrow that list further.
 
 `earlyWeapons` is a separate shared query for the early weapon highlight, early sockets,
-and momentum-color sections, including explicit base types. If `earlyWeapons` is omitted
+including explicit base types. If `earlyWeapons` is omitted
 or left empty, those sections fall back to the preferred weapon query.
-Only set `early.momentumColors` if momentum colors should use a different weapon query.
 
 `shieldProgression` controls:
-- the shield `RGG` 3-link rule
+- the shield 3-link rule
 - early shield link/base highlights
 - early socket shield handling
 - preferred rare shield highlighting
@@ -43,44 +42,17 @@ export const buildSpecificOptions: BuildSpecificOptions = {
   links: {
     // Useful override if your build wants 2-links longer or shorter than the shared default.
     // twoLinkMaxAreaLevel: 9,
-    twoLinkPatterns: [
-      // Early 2-links you want to see on armour pieces.
-      // Any RGB order works here.
-      "RG",
-      "GG",
-      // You can also set a custom level cap per pattern.
-      // { pattern: "RB", itemClasses: ["Boots", "Gloves"], maxAreaLevel: 16 },
-    ],
-    threeLinkPatterns: [
-      // 3-links for your build.
-      "RRG",
-      "RGG",
-      "RGB",
-      // Example with a custom item-class scope or cap.
-      // { pattern: "GGB", itemClasses: ["Body Armours", "Gloves"], maxAreaLevel: 28 },
-    ],
+    // Any item containing one of these socket patterns gets the good-link style.
+    // A link with one of these patterns and a preferred armour type gets the selected-link style.
+    // "RG" requires both red and green; ["R", "G"] matches either color.
+    prefColors: ["RG"],
+    // Built-in game sounds for every 2- and 3-link. Change these preset ids as desired.
+    // twoLinkSoundId: 2,
+    // threeLinkSoundId: 3,
     // Shared cap for 3-links that you can override
     // threeLinkMaxAreaLevel: 33,
-    // Set to false if you do not want the derived "good 3-link" matches from your 2-link patterns.
-    // goodThreeLinksEnabled: true,
-    // Set to true if you want to see any 3-links.
-    genericThreeLinksEnabled: false,
-    fourLinkPatterns: [
-      // 4-links for your build.
-      "RRRG",
-      "RRGG",
-      "RGGG",
-      // Example with a custom level cap.
-      // { pattern: "RRRB", maxAreaLevel: 45 },
-    ],
     // Shared cap for 4-links that you can override
     // fourLinkMaxAreaLevel: 53,
-    // Set to false if you do not want the preferred/type-based "good" 4-links.
-    goodFourLinksEnabled: true,
-    // Set to true if you want to see any remaining 4-links beyond the selected and preferred ones.
-    genericFourLinksEnabled: false,
-    // Optional override if you want different preferred/type-based 4-links than `preferredArmourTypes`.
-    // goodFourLinks: ["armour", "armour-evasion", "evasion"],
   },
   highlightedEquipment: {
     highlights: [
@@ -100,9 +72,8 @@ export const buildSpecificOptions: BuildSpecificOptions = {
       // Set `weaponCutoffEnabled: false` if you want a weapon item class to stay highlighted indefinitely.
       // { itemClasses: ["Two Hand Axes"], weaponCutoffEnabled: false },
       // { baseTypes: ["Boarding Axe"], weaponCutoffEnabled: true, weaponCutoffOverlap: 8 },
-      // Socket groups can further narrow a highlight. Defaults to contains-match (">=").
-      // { itemClasses: ["Body Armours"], socketGroups: ["RGB"] },
-      // { itemClasses: ["Shields"], socketGroupOperator: ">=", socketGroups: ["RG"] },
+      // Socket colors can further narrow a highlight. "RG" requires both red and green.
+      // { itemClasses: ["Body Armours"], socketColors: ["RG"] },
       // You can also attach a custom sound or builtin sound id.
       // { baseTypes: ["Corroded Blade"], soundFileName: "pop.mp3", minAreaLevel: 12, maxAreaLevel: 16 },
       // { itemClasses: ["Two Hand Maces"], soundId: 1, minAreaLevel: 12, maxAreaLevel: 16 },
@@ -123,10 +94,6 @@ export const buildSpecificOptions: BuildSpecificOptions = {
   early: {
     // Disable this for caster builds that don't care about rustic bases
     showRustic: true,
-    // Disable if you do not want the shared momentum-color handling.
-    includeMomentumColors: true,
-    // Optional override if your momentum colors should use a different target set.
-    // momentumColors: { itemClasses: ["Two Hand Axes"], minAps: 1.3 },
   },
   tinctures: {
     baseTypes: [

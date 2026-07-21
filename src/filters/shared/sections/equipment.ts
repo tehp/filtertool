@@ -1,160 +1,143 @@
 import rule from "../../../rule"
+import type { NumberRange } from "../../../types"
 import { filterDefaults } from "../defaults"
 import { filterStyles, soundFile, styleMixin } from "../styles"
 import {
   ARMOUR_CLASSES,
   buildFlaskSeries,
-  buildGoodFourLinkRules,
   buildHighlightedBaseTypeRules,
-  buildItemClassSocketRules,
   BuildProfile,
   buildUtilityFlaskRules,
   ChromaticItemsConfig,
   compileRules,
   defenceMixinMap,
-  FourLinkPattern,
-  getShieldProgressionMode,
-  getSocketPatternEffectColor,
-  getSocketPatternSoundPrefix,
   HighlightedEquipmentConfig,
   JewelleryConfig,
   LEVELING_AMULETS,
   LinksConfig,
   MagicItemsConfig,
   NormalItemsConfig,
-  normalizeGoodFourLinkConfig,
   normalizeLevelingAmuletConfig,
   normalizeShieldProgressionConfig,
-  normalizeSocketPatternConfig,
+  normalizeSocketColorPatterns,
   RareItemsConfig,
   resolveSharedWeaponQuery,
   resolveWeaponBaseTypes,
   SOCKETABLE_CLASSES,
-  ThreeLinkPattern,
   TincturesConfig,
-  TwoLinkPattern,
   withHeading,
 } from "./helpers"
 
 export const links = ({
-  twoLinkPatterns = [],
   twoLinkMaxAreaLevel = filterDefaults.links.twoLinkMaxAreaLevel,
-  threeLinkPatterns = [],
   threeLinkMaxAreaLevel = filterDefaults.links.threeLinkMaxAreaLevel,
-  goodThreeLinksEnabled = true,
-  genericThreeLinksEnabled = false,
-  fourLinkPatterns = [],
-  goodFourLinksEnabled = true,
-  genericFourLinksEnabled = false,
-  goodFourLinks,
-  preferredArmourTypes,
+  fourLinkMaxAreaLevel = filterDefaults.links.fourLinkMaxAreaLevel,
+  prefColors = [],
+  twoLinkSoundId = filterDefaults.links.twoLinkSoundId,
+  threeLinkSoundId = filterDefaults.links.threeLinkSoundId,
+  preferredArmourTypes = [],
   shieldProgression,
 }: LinksConfig & Partial<BuildProfile>) => {
   const shieldConfig = normalizeShieldProgressionConfig(shieldProgression)
-  const shieldProgressionMode = getShieldProgressionMode(shieldProgression)
-  const goodFourLinkEntries = goodFourLinks ?? preferredArmourTypes ?? []
-  const shieldThreeLinkRules =
-    shieldProgressionMode === "full"
-      ? buildItemClassSocketRules({
-          linkedSockets: 3,
-          pattern: "RGG",
-          itemClasses: ["Shields"],
-          soundPrefix: getSocketPatternSoundPrefix("GGR"),
-          maxAreaLevel: shieldConfig.maxAreaLevel,
-          style: styleMixin(filterStyles.selectedThreeLink),
-        })
-      : []
+  const preferredSocketPatterns = normalizeSocketColorPatterns(prefColors)
+  const shieldThreeLinkRule = shieldConfig.enabled
+    ? rule().itemClass("Shields").linkedSockets("==", 3).mixin(styleMixin(filterStyles.selectedThreeLink)).sound(threeLinkSoundId)
+    : null
+
+  if (shieldThreeLinkRule && shieldConfig.maxAreaLevel !== undefined) {
+    shieldThreeLinkRule.areaLevel("<=", shieldConfig.maxAreaLevel)
+  }
+
+  const buildLinkRules = ({
+    linkedSockets,
+    maxAreaLevel,
+    normalStyle,
+    goodStyle,
+    selectedStyle,
+    soundId,
+  }: {
+    linkedSockets: 2 | 3 | 4
+    maxAreaLevel: number
+    normalStyle: keyof typeof filterStyles
+    goodStyle: keyof typeof filterStyles
+    selectedStyle: keyof typeof filterStyles
+    soundId?: NumberRange<1, 17>
+  }) => {
+    const itemClasses = linkedSockets === 4 ? ARMOUR_CLASSES : [undefined]
+    const buildBaseRule = (itemClass?: (typeof ARMOUR_CLASSES)[number]) =>
+      rule()
+        .itemClass(...(itemClass ? [itemClass] : ARMOUR_CLASSES))
+        .linkedSockets("==", linkedSockets)
+        .areaLevel("<=", maxAreaLevel)
+    const addSound = (builtRule: ReturnType<typeof buildBaseRule>, itemClass?: (typeof ARMOUR_CLASSES)[number]) => {
+      if (linkedSockets === 4) {
+        const slot = { "Body Armours": "body", "Gloves": "gloves", "Boots": "boots", "Helmets": "helm" } as const
+        return builtRule.customSound(soundFile(`4_link_${slot[itemClass!]}.mp3`))
+      }
+
+      return builtRule.sound(soundId!)
+    }
+
+    const selectedRules = itemClasses.flatMap((itemClass) =>
+      preferredArmourTypes.flatMap((defenceType) =>
+        preferredSocketPatterns.map((pattern) =>
+          addSound(
+            buildBaseRule(itemClass)
+              .mixin(defenceMixinMap[defenceType])
+              .socketGroup(">=", pattern)
+              .mixin(styleMixin(filterStyles[selectedStyle])),
+            itemClass,
+          ),
+        ),
+      ),
+    )
+
+    const goodRules = itemClasses.flatMap((itemClass) =>
+      preferredSocketPatterns.map((pattern) =>
+        addSound(buildBaseRule(itemClass).socketGroup(">=", pattern).mixin(styleMixin(filterStyles[goodStyle])), itemClass),
+      ),
+    )
+
+    const normalRules = itemClasses.map((itemClass) =>
+      addSound(
+        buildBaseRule(itemClass)
+          .mixin(styleMixin(filterStyles[normalStyle]))
+          .size(linkedSockets === 2 ? 45 : 40),
+        itemClass,
+      ),
+    )
+
+    return [...selectedRules, ...goodRules, ...normalRules]
+  }
 
   return withHeading(
     "Links",
     compileRules(
       rule().linkedSockets("=", 6).icon("Red", "Diamond").mixin(styleMixin(filterStyles.priorityA)).customSound(soundFile("6_link.mp3")),
       rule().linkedSockets("=", 5).icon("Orange", "Diamond").mixin(styleMixin(filterStyles.priorityB)).customSound(soundFile("5_link.mp3")),
-      ...fourLinkPatterns.flatMap((entry) => {
-        const { pattern, maxAreaLevel, itemClasses } = normalizeSocketPatternConfig<FourLinkPattern>(entry)
-
-        return buildItemClassSocketRules({
-          linkedSockets: 4,
-          pattern,
-          itemClasses,
-          soundPrefix: getSocketPatternSoundPrefix(pattern),
-          maxAreaLevel: maxAreaLevel ?? filterDefaults.links.fourLinkMaxAreaLevel,
-          style: styleMixin(filterStyles.selectedFourLink),
-        })
+      ...buildLinkRules({
+        linkedSockets: 4,
+        maxAreaLevel: fourLinkMaxAreaLevel,
+        normalStyle: "fourLink",
+        goodStyle: "goodFourLink",
+        selectedStyle: "selectedFourLink",
       }),
-      ...(goodFourLinksEnabled
-        ? goodFourLinkEntries.flatMap((entry) => {
-            const { defenceType, maxAreaLevel } = normalizeGoodFourLinkConfig(entry)
-
-            return buildGoodFourLinkRules({
-              defenceType,
-              maxAreaLevel: maxAreaLevel ?? filterDefaults.links.fourLinkMaxAreaLevel,
-            })
-          })
-        : []),
-      genericFourLinksEnabled &&
-        rule()
-          .linkedSockets("==", 4)
-          .itemClass(...ARMOUR_CLASSES)
-          .areaLevel("<=", filterDefaults.links.fourLinkMaxAreaLevel)
-          .mixin(styleMixin(filterStyles.fourLink))
-          .size(40),
-      ...threeLinkPatterns.flatMap((entry) => {
-        const { pattern, maxAreaLevel, itemClasses } = normalizeSocketPatternConfig<ThreeLinkPattern>(entry)
-
-        return buildItemClassSocketRules({
-          linkedSockets: 3,
-          pattern,
-          itemClasses,
-          soundPrefix: getSocketPatternSoundPrefix(pattern),
-          maxAreaLevel: maxAreaLevel ?? threeLinkMaxAreaLevel,
-          style: styleMixin(filterStyles.selectedThreeLink),
-        })
+      ...buildLinkRules({
+        linkedSockets: 3,
+        maxAreaLevel: threeLinkMaxAreaLevel,
+        normalStyle: "threeLink",
+        goodStyle: "goodThreeLink",
+        selectedStyle: "selectedThreeLink",
+        soundId: threeLinkSoundId,
       }),
-      ...(goodThreeLinksEnabled
-        ? twoLinkPatterns.map((entry) => {
-            const { pattern, maxAreaLevel, itemClasses } = normalizeSocketPatternConfig<TwoLinkPattern>(entry)
-            const effectiveItemClasses = itemClasses ?? ARMOUR_CLASSES
-            const effectiveMaxAreaLevel = maxAreaLevel ?? threeLinkMaxAreaLevel
-            const builtRule = rule()
-              .itemClass(...effectiveItemClasses)
-              .linkedSockets("==", 3)
-              .socketGroup(">=", pattern)
-              .icon(getSocketPatternEffectColor(pattern), "Diamond")
-              .effect(getSocketPatternEffectColor(pattern))
-              .mixin(styleMixin(filterStyles.goodThreeLink))
-
-            if (effectiveMaxAreaLevel !== undefined) {
-              builtRule.areaLevel("<=", effectiveMaxAreaLevel)
-            }
-
-            return builtRule
-          })
-        : []),
-      ...shieldThreeLinkRules,
-      genericThreeLinksEnabled &&
-        rule()
-          .linkedSockets("==", 3)
-          .itemClass(...ARMOUR_CLASSES)
-          .areaLevel("<=", threeLinkMaxAreaLevel)
-          .mixin(styleMixin(filterStyles.threeLink))
-          .size(40),
-      ...twoLinkPatterns.map((entry) => {
-        const { pattern, maxAreaLevel, itemClasses } = normalizeSocketPatternConfig<TwoLinkPattern>(entry)
-        const effectiveItemClasses = itemClasses ?? ARMOUR_CLASSES
-        const effectiveMaxAreaLevel = maxAreaLevel ?? twoLinkMaxAreaLevel
-        const builtRule = rule()
-          .itemClass(...effectiveItemClasses)
-          .socketGroup("==", pattern)
-          .icon(getSocketPatternEffectColor(pattern), "Diamond")
-          .effect(getSocketPatternEffectColor(pattern))
-          .mixin(styleMixin(filterStyles.selectedTwoLink))
-
-        if (effectiveMaxAreaLevel !== undefined) {
-          builtRule.areaLevel("<=", effectiveMaxAreaLevel)
-        }
-
-        return builtRule
+      shieldThreeLinkRule,
+      ...buildLinkRules({
+        linkedSockets: 2,
+        maxAreaLevel: twoLinkMaxAreaLevel,
+        normalStyle: "twoLink",
+        goodStyle: "goodTwoLink",
+        selectedStyle: "selectedTwoLink",
+        soundId: twoLinkSoundId,
       }),
     ),
   )

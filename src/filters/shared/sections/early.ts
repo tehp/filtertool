@@ -11,7 +11,6 @@ import {
   resolveMixedItemClassWeaponQuery,
   resolveSharedWeaponQuery,
   resolveWeaponBaseTypes,
-  SOCKETABLE_CLASSES,
   withHeading,
 } from "./helpers"
 
@@ -79,9 +78,6 @@ export const early = ({
   preferredWeaponMinAps,
   earlyMaxAreaLevel = filterDefaults.campaign.earlyMaxAreaLevel,
   showRustic = filterDefaults.early.showRustic,
-  includeMomentumColors = filterDefaults.early.includeMomentumColors,
-  momentumColors,
-  momentumMaxAreaLevel = filterDefaults.early.momentumMaxAreaLevel,
   shieldProgression,
 }: EarlyConfig & Partial<BuildProfile>) => {
   const resolvedEarlyWeapons = resolveSharedWeaponQuery({
@@ -91,19 +87,6 @@ export const early = ({
   })
   const earlyBootsMaxAreaLevel = filterDefaults.early.earlyBootsMaxAreaLevel
   const shieldConfig = normalizeShieldProgressionConfig(shieldProgression)
-  const defaultMomentumItemClasses = shieldConfig.enabled ? SOCKETABLE_CLASSES : ARMOUR_CLASSES
-  const { itemClasses: momentumItemClasses = [], baseTypes: momentumBaseTypes = [] } = resolveMixedItemClassWeaponQuery({
-    itemClasses: momentumColors?.itemClasses ?? [...defaultMomentumItemClasses, ...resolvedEarlyWeapons.itemClasses],
-    baseTypes: momentumColors?.baseTypes ?? resolvedEarlyWeapons.baseTypes,
-    minAps: momentumColors?.minAps ?? resolvedEarlyWeapons.minAps,
-  })
-  const effectiveMomentumMaxAreaLevel = momentumColors?.maxAreaLevel ?? momentumMaxAreaLevel
-  const buildMomentumRule = () =>
-    rule()
-      .socketGroup(">=", "RGG")
-      .areaLevel("<=", effectiveMomentumMaxAreaLevel)
-      .mixin(styleMixin(filterStyles.momentum))
-      .icon("Orange", "Kite")
   const buildWeaponHighlightRules = ({
     baseTypes,
     itemClasses,
@@ -153,12 +136,6 @@ export const early = ({
         .rarity("==", "Rare")
         .mixin(styleMixin(filterStyles.rareArmour))
         .customSound(soundFile("rare_boots.mp3")),
-      shieldConfig.enabled &&
-        rule()
-          .itemClass("Shields")
-          .socketGroup(">=", "RG")
-          .areaLevel("<=", earlyMaxAreaLevel)
-          .mixin(styleMixin(filterStyles.earlyShieldLink)),
       shieldConfig.enabled && rule().itemClass("Shields").areaLevel("<=", 8).mixin(styleMixin(filterStyles.earlyShieldBase)),
       showRustic &&
         rule()
@@ -168,12 +145,6 @@ export const early = ({
           .icon("White", "Pentagon")
           .mixin(styleMixin(filterStyles.jewellery))
           .customSound(soundFile("rustic.mp3")),
-      ...(includeMomentumColors
-        ? [
-            momentumItemClasses.length > 0 && buildMomentumRule().itemClass(...momentumItemClasses),
-            momentumBaseTypes && momentumBaseTypes.length > 0 && buildMomentumRule().baseType(...momentumBaseTypes),
-          ]
-        : []),
     ),
   )
 }

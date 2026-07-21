@@ -13,13 +13,9 @@ export const buildProfile = {
 
 export const buildSpecificOptions: BuildSpecificOptions = {
   links: {
-    twoLinkPatterns: [],
-    threeLinkPatterns: [],
-    goodThreeLinksEnabled: true,
-    genericThreeLinksEnabled: false,
-    fourLinkPatterns: [],
-    goodFourLinksEnabled: true,
-    genericFourLinksEnabled: false,
+    prefColors: [],
+    // twoLinkSoundId: 2,
+    // threeLinkSoundId: 3,
   },
   highlightedEquipment: {
     highlights: [],
@@ -29,7 +25,6 @@ export const buildSpecificOptions: BuildSpecificOptions = {
   },
   early: {
     showRustic: true,
-    includeMomentumColors: true,
   },
   tinctures: {
     baseTypes: [],

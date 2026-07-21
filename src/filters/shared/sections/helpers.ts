@@ -81,52 +81,15 @@ export type BuildSpecificOptions = {
 }
 
 // Links
-export type SocketColor = "R" | "G" | "B"
-export type AnyTwoLinkPattern = `${SocketColor}${SocketColor}`
-export type AnyThreeLinkPattern = `${SocketColor}${SocketColor}${SocketColor}`
-export type AnyFourLinkPattern = `${SocketColor}${SocketColor}${SocketColor}${SocketColor}`
-export type TwoLinkPattern = "RR" | "RG" | "RB" | "GG" | "GB" | "BB"
-export type ThreeLinkPattern = "RRR" | "RRG" | "RRB" | "GGR" | "RGB" | "BBR" | "GGG" | "GGB" | "BBG" | "BBB"
-export type FourLinkPattern =
-  | "RRRR"
-  | "RRRG"
-  | "RRRB"
-  | "RRGG"
-  | "RRGB"
-  | "RRBB"
-  | "GGGR"
-  | "GGRB"
-  | "BBRG"
-  | "BBBR"
-  | "GGGG"
-  | "GGGB"
-  | "GGBB"
-  | "BBBG"
-  | "BBBB"
-export type SocketPattern = TwoLinkPattern | ThreeLinkPattern | FourLinkPattern
-
-export type SocketPatternConfig<TPattern extends string = SocketPattern> = {
-  pattern: TPattern
-  maxAreaLevel?: number
-  itemClasses?: readonly SocketableItemClass[]
-}
-
-export type GoodFourLinkConfig = {
-  defenceType: DefenceBaseType
-  maxAreaLevel?: number
-}
+export type SocketColorPattern = "R" | "G" | "B" | "RG" | "RB" | "GB" | "RGB"
 
 export type LinksConfig = {
-  twoLinkPatterns?: readonly (AnyTwoLinkPattern | SocketPatternConfig<AnyTwoLinkPattern>)[]
   twoLinkMaxAreaLevel?: number
-  threeLinkPatterns?: readonly (AnyThreeLinkPattern | SocketPatternConfig<AnyThreeLinkPattern>)[]
   threeLinkMaxAreaLevel?: number
-  goodThreeLinksEnabled?: boolean
-  genericThreeLinksEnabled?: boolean
-  fourLinkPatterns?: readonly (AnyFourLinkPattern | SocketPatternConfig<AnyFourLinkPattern>)[]
-  goodFourLinksEnabled?: boolean
-  genericFourLinksEnabled?: boolean
-  goodFourLinks?: readonly (DefenceBaseType | GoodFourLinkConfig)[]
+  fourLinkMaxAreaLevel?: number
+  prefColors?: readonly SocketColorPattern[]
+  twoLinkSoundId?: NumberRange<1, 17>
+  threeLinkSoundId?: NumberRange<1, 17>
 }
 
 export type ShieldProgressionMode = "none" | "early" | "full"
@@ -143,135 +106,7 @@ export type NormalizedShieldProgressionConfig = {
   maxAreaLevel?: number
 }
 
-const SLOT_SOUND_SUFFIX = {
-  "Body Armours": "body",
-  "Gloves": "gloves",
-  "Boots": "boots",
-  "Helmets": "helm",
-  "Shields": "shield",
-} as const satisfies Record<SocketableItemClass, string>
-
-const SOCKET_PATTERN_SOUND_PREFIXES = {
-  RRR: "3r",
-  RRG: "2r1g",
-  RRB: "2r1b",
-  GGR: "2g1r",
-  RGB: "chrome",
-  BBR: "2b1r",
-  GGG: "3g",
-  GGB: "2g1b",
-  BBG: "2b1g",
-  BBB: "3b",
-  RRRR: "4r",
-  RRRG: "3r1g",
-  RRRB: "3r1b",
-  RRGG: "2r2g",
-  RRGB: "2r1g1b",
-  RRBB: "2r2b",
-  GGGR: "3g1r",
-  GGRB: "2g1r1b",
-  BBRG: "2b1r1g",
-  BBBR: "3b1r",
-  GGGG: "4g",
-  GGGB: "3g1b",
-  GGBB: "2g2b",
-  BBBG: "3b1g",
-  BBBB: "4b",
-} as const satisfies Record<ThreeLinkPattern | FourLinkPattern, string>
-
-type SocketPatternSoundPrefix = (typeof SOCKET_PATTERN_SOUND_PREFIXES)[keyof typeof SOCKET_PATTERN_SOUND_PREFIXES]
-
-export const getSocketPatternSoundPrefix = (pattern: ThreeLinkPattern | FourLinkPattern): SocketPatternSoundPrefix =>
-  SOCKET_PATTERN_SOUND_PREFIXES[pattern]
-
-export const goodFourLinkSoundMap = {
-  "armour": "4_link_armour",
-  "armour-evasion": "4_link_armour_evasion",
-  "armour-es": "4_link_armour_es",
-  "evasion": "4_link_evasion",
-  "es": "4_link_es",
-  "es-evasion": "4_link_evasion_es",
-} as const satisfies Record<DefenceBaseType, string>
-
-const buildSocketPatternSoundFile = (soundPrefix: SocketPatternSoundPrefix, itemClass: SocketableItemClass): SoundFile =>
-  `${soundPrefix}_${SLOT_SOUND_SUFFIX[itemClass]}.mp3` as SoundFile
-
-const buildGoodFourLinkSoundFile = (defenceType: DefenceBaseType, itemClass: ArmourItemClass): SoundFile =>
-  `${goodFourLinkSoundMap[defenceType]}_${SLOT_SOUND_SUFFIX[itemClass]}.mp3` as SoundFile
-
-const SOCKET_COLOR_PRIORITY = { R: 0, G: 1, B: 2 } as const
-const SOCKET_EFFECT_COLOR_MAP = { R: "Red", G: "Green", B: "Blue" } as const satisfies Record<SocketColor, Color>
-const DEFENCE_TYPE_HIGHLIGHT_COLOR_MAP = {
-  "armour": "Red",
-  "evasion": "Green",
-  "es": "Blue",
-  "armour-evasion": "White",
-  "armour-es": "White",
-  "es-evasion": "White",
-} as const satisfies Record<DefenceBaseType, Color>
-
-export const normalizeSocketPattern = <TPattern extends SocketPattern>(pattern: string): TPattern => {
-  const socketColors = [...pattern]
-
-  if (!socketColors.every((color): color is SocketColor => color in SOCKET_COLOR_PRIORITY)) {
-    throw new Error(`Invalid socket pattern "${pattern}". Only R, G, and B are allowed.`)
-  }
-
-  const colorCounts = socketColors.reduce<Record<SocketColor, number>>(
-    (counts, color) => {
-      counts[color] += 1
-      return counts
-    },
-    { R: 0, G: 0, B: 0 },
-  )
-
-  const normalizedPattern = [...socketColors]
-    .sort((left, right) => {
-      const countDelta = colorCounts[right] - colorCounts[left]
-      return countDelta !== 0 ? countDelta : SOCKET_COLOR_PRIORITY[left] - SOCKET_COLOR_PRIORITY[right]
-    })
-    .join("")
-
-  return normalizedPattern as TPattern
-}
-
-export const getSocketPatternEffectColor = (pattern: string): Color => {
-  const socketColors = [...pattern]
-
-  if (!socketColors.every((color): color is SocketColor => color in SOCKET_COLOR_PRIORITY)) {
-    throw new Error(`Invalid socket pattern "${pattern}". Only R, G, and B are allowed.`)
-  }
-
-  const colorCounts = socketColors.reduce<Record<SocketColor, number>>(
-    (counts, color) => {
-      counts[color] += 1
-      return counts
-    },
-    { R: 0, G: 0, B: 0 },
-  )
-
-  const highestCount = Math.max(...Object.values(colorCounts))
-  const highestColors = (Object.entries(colorCounts) as [SocketColor, number][])
-    .filter(([, count]) => count === highestCount)
-    .map(([color]) => color)
-
-  return highestColors.length === 1 ? SOCKET_EFFECT_COLOR_MAP[highestColors[0]] : "White"
-}
-
-export const getDefenceTypeHighlightColor = (defenceType: DefenceBaseType): Color => DEFENCE_TYPE_HIGHLIGHT_COLOR_MAP[defenceType]
-
-export const normalizeSocketPatternConfig = <TNormalizedPattern extends SocketPattern, TRawPattern extends string = string>(
-  entry: TRawPattern | SocketPatternConfig<TRawPattern>,
-): SocketPatternConfig<TNormalizedPattern> => {
-  const normalizedEntry = typeof entry === "string" ? { pattern: entry } : entry
-  return {
-    ...normalizedEntry,
-    pattern: normalizeSocketPattern<TNormalizedPattern>(normalizedEntry.pattern),
-  }
-}
-
-export const normalizeGoodFourLinkConfig = (entry: DefenceBaseType | GoodFourLinkConfig): GoodFourLinkConfig =>
-  typeof entry === "string" ? { defenceType: entry } : entry
+export const normalizeSocketColorPatterns = (patterns: readonly SocketColorPattern[]) => [...new Set(patterns)]
 
 export const normalizeShieldProgressionConfig = (shieldProgression?: ShieldProgressionConfig): NormalizedShieldProgressionConfig => {
   const defaultMode = filterDefaults.shieldProgression.mode
@@ -307,9 +142,6 @@ export const normalizeShieldProgressionConfig = (shieldProgression?: ShieldProgr
   }
 }
 
-export const getShieldProgressionMode = (shieldProgression?: ShieldProgressionConfig): ShieldProgressionMode =>
-  typeof shieldProgression === "string" ? shieldProgression : (shieldProgression?.mode ?? filterDefaults.shieldProgression.mode)
-
 export const defenceMixinMap: Record<DefenceBaseType, Mixin> = {
   "armour": (target) => target.baseArmour(">=", 1).baseES("==", 0).baseEvasion("==", 0),
   "evasion": (target) => target.baseArmour("==", 0).baseES("==", 0).baseEvasion(">=", 1),
@@ -335,65 +167,6 @@ export const applyHighlightTargets = (
 }
 
 const isWeaponItemClass = (itemClass: ItemClass): itemClass is WeaponItemClass => WEAPON_CLASSES.includes(itemClass as WeaponItemClass)
-
-export const buildItemClassSocketRules = ({
-  linkedSockets,
-  pattern,
-  itemClasses = ARMOUR_CLASSES,
-  soundPrefix,
-  maxAreaLevel,
-  style = styleMixin(filterStyles.fourLink),
-}: {
-  linkedSockets?: 2 | 3 | 4
-  pattern: string
-  itemClasses?: readonly SocketableItemClass[]
-  soundPrefix?: SocketPatternSoundPrefix
-  maxAreaLevel?: number
-  style?: Mixin
-}): Rule[] =>
-  itemClasses.map((itemClass) => {
-    const highlightColor = getSocketPatternEffectColor(pattern)
-    const builtRule = rule()
-      .itemClass(itemClass)
-      .socketGroup("==", pattern)
-      .icon(highlightColor, "Diamond")
-      .effect(highlightColor)
-      .mixin(style)
-
-    if (maxAreaLevel !== undefined) {
-      builtRule.areaLevel("<=", maxAreaLevel)
-    }
-
-    if (linkedSockets !== undefined) {
-      builtRule.linkedSockets("==", linkedSockets)
-    }
-
-    if (!soundPrefix) {
-      return builtRule
-    }
-
-    return builtRule.customSound(soundFile(buildSocketPatternSoundFile(soundPrefix, itemClass)))
-  })
-
-export const buildGoodFourLinkRules = ({ defenceType, maxAreaLevel }: GoodFourLinkConfig) =>
-  ARMOUR_CLASSES.flatMap((itemClass) => {
-    const buildBaseRule = () =>
-      rule()
-        .itemClass(itemClass)
-        .linkedSockets("==", 4)
-        .mixin(defenceMixinMap[defenceType])
-        .icon(getDefenceTypeHighlightColor(defenceType), "Diamond")
-        .effect(getDefenceTypeHighlightColor(defenceType))
-        .mixin(styleMixin(filterStyles.goodFourLink))
-
-    const ruleWithSound = buildBaseRule().customSound(soundFile(buildGoodFourLinkSoundFile(defenceType, itemClass)))
-
-    if (maxAreaLevel === undefined) {
-      return ruleWithSound
-    }
-
-    return [ruleWithSound.areaLevel("<=", maxAreaLevel), buildBaseRule().areaLevel(">", maxAreaLevel).rarity("!=", "Magic")]
-  })
 
 // Jewellery
 export const LEVELING_AMULETS = {
@@ -439,8 +212,7 @@ export type HighlightedBaseTypeConfig = {
   baseTypes?: readonly BaseType[]
   itemClasses?: readonly ItemClass[]
   minAps?: number
-  socketGroups?: readonly string[]
-  socketGroupOperator?: Operator
+  socketColors?: readonly SocketColorPattern[]
   weaponCutoffEnabled?: boolean
   weaponCutoffOverlap?: number
   rarityOperator?: Operator
@@ -504,8 +276,7 @@ const buildHighlightedRule = ({
   selectedRarity,
   baseTypes,
   itemClasses,
-  socketGroups,
-  socketGroupOperator = ">=",
+  socketColor,
   minAreaLevel,
   maxAreaLevel,
   soundId,
@@ -515,8 +286,7 @@ const buildHighlightedRule = ({
   selectedRarity?: Rarity
   baseTypes?: readonly BaseType[]
   itemClasses?: readonly ItemClass[]
-  socketGroups?: readonly string[]
-  socketGroupOperator?: Operator
+  socketColor?: SocketColorPattern
   minAreaLevel?: number
   maxAreaLevel?: number
   soundId?: NumberRange<1, 17>
@@ -540,8 +310,8 @@ const buildHighlightedRule = ({
     builtRule.areaLevel("<=", maxAreaLevel)
   }
 
-  if (socketGroups?.length) {
-    builtRule.socketGroup(socketGroupOperator, ...socketGroups)
+  if (socketColor) {
+    builtRule.socketGroup(">=", socketColor)
   }
 
   if (tts) {
@@ -572,8 +342,7 @@ export const buildHighlightedBaseTypeRules = ({
   baseTypes,
   itemClasses,
   minAps,
-  socketGroups,
-  socketGroupOperator,
+  socketColors,
   weaponCutoffEnabled,
   weaponCutoffOverlap = 5,
   rarityOperator,
@@ -593,6 +362,8 @@ export const buildHighlightedBaseTypeRules = ({
   const weaponItemClasses = itemClasses?.filter(isWeaponItemClass)
   const nonWeaponItemClasses = itemClasses?.filter((itemClass) => !isWeaponItemClass(itemClass))
   const effectiveWeaponCutoffEnabled = weaponCutoffEnabled ?? (weaponItemClasses?.length ?? 0) > 0
+  const socketPatterns = normalizeSocketColorPatterns(socketColors ?? [])
+  const socketPatternVariants = socketPatterns.length > 0 ? socketPatterns : [undefined]
 
   if (!effectiveWeaponCutoffEnabled) {
     const { itemClasses: resolvedItemClasses, baseTypes: resolvedBaseTypes } = resolveMixedItemClassWeaponQuery({
@@ -601,19 +372,20 @@ export const buildHighlightedBaseTypeRules = ({
       minAps,
     })
 
-    return appliedRarities.map((selectedRarity) =>
-      buildHighlightedRule({
-        selectedRarity,
-        baseTypes: resolvedBaseTypes.length > 0 ? resolvedBaseTypes : undefined,
-        itemClasses: resolvedItemClasses,
-        socketGroups,
-        socketGroupOperator,
-        minAreaLevel,
-        maxAreaLevel,
-        soundId,
-        soundFileName,
-        tts,
-      }).rarity("==", selectedRarity),
+    return appliedRarities.flatMap((selectedRarity) =>
+      socketPatternVariants.map((socketColor) =>
+        buildHighlightedRule({
+          selectedRarity,
+          baseTypes: resolvedBaseTypes.length > 0 ? resolvedBaseTypes : undefined,
+          itemClasses: resolvedItemClasses,
+          socketColor,
+          minAreaLevel,
+          maxAreaLevel,
+          soundId,
+          soundFileName,
+          tts,
+        }).rarity("==", selectedRarity),
+      ),
     )
   }
 
@@ -631,35 +403,37 @@ export const buildHighlightedBaseTypeRules = ({
         ? Math.min(maxAreaLevel, automaticMaxAreaLevel)
         : (maxAreaLevel ?? automaticMaxAreaLevel)
 
-    return appliedRarities.map((selectedRarity) =>
-      buildHighlightedRule({
-        selectedRarity,
-        baseTypes: [baseType],
-        socketGroups,
-        socketGroupOperator,
-        minAreaLevel,
-        maxAreaLevel: effectiveMaxAreaLevel,
-        soundId,
-        soundFileName,
-        tts,
-      }).rarity("==", selectedRarity),
+    return appliedRarities.flatMap((selectedRarity) =>
+      socketPatternVariants.map((socketColor) =>
+        buildHighlightedRule({
+          selectedRarity,
+          baseTypes: [baseType],
+          socketColor,
+          minAreaLevel,
+          maxAreaLevel: effectiveMaxAreaLevel,
+          soundId,
+          soundFileName,
+          tts,
+        }).rarity("==", selectedRarity),
+      ),
     )
   })
   const nonWeaponRules =
     (nonWeaponItemClasses?.length ?? 0) > 0 || nonWeaponBaseTypes.length > 0
-      ? appliedRarities.map((selectedRarity) =>
-          buildHighlightedRule({
-            selectedRarity,
-            baseTypes: nonWeaponBaseTypes.length > 0 ? nonWeaponBaseTypes : undefined,
-            itemClasses: nonWeaponItemClasses?.length ? nonWeaponItemClasses : undefined,
-            socketGroups,
-            socketGroupOperator,
-            minAreaLevel,
-            maxAreaLevel,
-            soundId,
-            soundFileName,
-            tts,
-          }).rarity("==", selectedRarity),
+      ? appliedRarities.flatMap((selectedRarity) =>
+          socketPatternVariants.map((socketColor) =>
+            buildHighlightedRule({
+              selectedRarity,
+              baseTypes: nonWeaponBaseTypes.length > 0 ? nonWeaponBaseTypes : undefined,
+              itemClasses: nonWeaponItemClasses?.length ? nonWeaponItemClasses : undefined,
+              socketColor,
+              minAreaLevel,
+              maxAreaLevel,
+              soundId,
+              soundFileName,
+              tts,
+            }).rarity("==", selectedRarity),
+          ),
         )
       : []
 
@@ -772,14 +546,6 @@ export type SharedEarlyWeaponConfig = {
 export type EarlyConfig = {
   earlyMaxAreaLevel?: number
   showRustic?: boolean
-  includeMomentumColors?: boolean
-  momentumColors?: {
-    itemClasses?: readonly ItemClass[]
-    baseTypes?: readonly BaseType[]
-    minAps?: number
-    maxAreaLevel?: number
-  }
-  momentumMaxAreaLevel?: number
 }
 
 // Rare, magic, normal items, tinctures, and chromatics
