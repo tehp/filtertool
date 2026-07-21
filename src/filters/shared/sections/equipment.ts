@@ -33,6 +33,8 @@ export const links = ({
   threeLinkMaxAreaLevel = filterDefaults.links.threeLinkMaxAreaLevel,
   fourLinkMaxAreaLevel = filterDefaults.links.fourLinkMaxAreaLevel,
   prefColors = [],
+  genericThreeLinksEnabled = true,
+  genericFourLinksEnabled = true,
   twoLinkSoundId = filterDefaults.links.twoLinkSoundId,
   threeLinkSoundId = filterDefaults.links.threeLinkSoundId,
   preferredArmourTypes = [],
@@ -55,6 +57,7 @@ export const links = ({
     goodStyle,
     selectedStyle,
     soundId,
+    genericEnabled = true,
   }: {
     linkedSockets: 2 | 3 | 4
     maxAreaLevel: number
@@ -62,6 +65,7 @@ export const links = ({
     goodStyle: keyof typeof filterStyles
     selectedStyle: keyof typeof filterStyles
     soundId?: NumberRange<1, 17>
+    genericEnabled?: boolean
   }) => {
     const itemClasses = linkedSockets === 4 ? ARMOUR_CLASSES : [undefined]
     const buildBaseRule = (itemClass?: (typeof ARMOUR_CLASSES)[number]) =>
@@ -98,14 +102,16 @@ export const links = ({
       ),
     )
 
-    const normalRules = itemClasses.map((itemClass) =>
-      addSound(
-        buildBaseRule(itemClass)
-          .mixin(styleMixin(filterStyles[normalStyle]))
-          .size(linkedSockets === 2 ? 45 : 40),
-        itemClass,
-      ),
-    )
+    const normalRules = genericEnabled
+      ? itemClasses.map((itemClass) =>
+          addSound(
+            buildBaseRule(itemClass)
+              .mixin(styleMixin(filterStyles[normalStyle]))
+              .size(linkedSockets === 2 ? 45 : 40),
+            itemClass,
+          ),
+        )
+      : []
 
     return [...selectedRules, ...goodRules, ...normalRules]
   }
@@ -121,6 +127,7 @@ export const links = ({
         normalStyle: "fourLink",
         goodStyle: "goodFourLink",
         selectedStyle: "selectedFourLink",
+        genericEnabled: genericFourLinksEnabled,
       }),
       ...buildLinkRules({
         linkedSockets: 3,
@@ -129,6 +136,7 @@ export const links = ({
         goodStyle: "goodThreeLink",
         selectedStyle: "selectedThreeLink",
         soundId: threeLinkSoundId,
+        genericEnabled: genericThreeLinksEnabled,
       }),
       shieldThreeLinkRule,
       ...buildLinkRules({

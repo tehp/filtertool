@@ -88,6 +88,8 @@ export type LinksConfig = {
   threeLinkMaxAreaLevel?: number
   fourLinkMaxAreaLevel?: number
   prefColors?: readonly SocketColorPattern[]
+  genericThreeLinksEnabled?: boolean
+  genericFourLinksEnabled?: boolean
   twoLinkSoundId?: NumberRange<1, 17>
   threeLinkSoundId?: NumberRange<1, 17>
 }

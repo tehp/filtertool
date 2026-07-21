@@ -49,6 +49,9 @@ export const buildSpecificOptions: BuildSpecificOptions = {
     // Built-in game sounds for every 2- and 3-link. Change these preset ids as desired.
     // twoLinkSoundId: 2,
     // threeLinkSoundId: 3,
+    // Set either to false to hide normal links that do not match a preferred socket pattern.
+    // genericThreeLinksEnabled: false,
+    // genericFourLinksEnabled: false,
     // Shared cap for 3-links that you can override
     // threeLinkMaxAreaLevel: 33,
     // Shared cap for 4-links that you can override

@@ -14,6 +14,8 @@ export const buildProfile = {
 export const buildSpecificOptions: BuildSpecificOptions = {
   links: {
     prefColors: [],
+    // genericThreeLinksEnabled: false,
+    // genericFourLinksEnabled: false,
     // twoLinkSoundId: 2,
     // threeLinkSoundId: 3,
   },
