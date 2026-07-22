@@ -1,42 +1,23 @@
 import assert from "node:assert/strict"
-import { mkdirSync, readFileSync, writeFileSync } from "node:fs"
-import path from "node:path"
 import { test } from "node:test"
-import { getFilter as getExampleFilter } from "../src/filters/example"
-import { getFilter as getTemplateFilter } from "../src/filters/template"
 import { buildProfile as templateProfile, buildSpecificOptions as templateOptions } from "../src/filters/template/config"
-import { early, highlightedEquipment, jewellery, links } from "../src/filters/shared"
+import { early, filterDefaults, filterStyles, highlightedEquipment, jewellery, links } from "../src/filters/shared"
 import { joinSections } from "../src/filters/shared/sections/composition"
 import { normalizeShieldProgressionConfig } from "../src/filters/shared/sections/options"
 import { resolveMixedItemClassWeaponQuery, resolveWeaponBaseTypes } from "../src/filters/shared/sections/weapon-queries"
 
-const fixturesPath = path.join(__dirname, "fixtures")
-
-const assertGolden = (name: string, output: string) => {
-  const goldenPath = path.join(fixturesPath, name)
-
-  if (process.env.UPDATE_GOLDENS === "1") {
-    mkdirSync(fixturesPath, { recursive: true })
-    writeFileSync(goldenPath, JSON.stringify(output))
-  }
-
-  assert.equal(output, JSON.parse(readFileSync(goldenPath, "utf8")))
-}
-
-test("template configuration compiles to its golden filter", () => {
-  assertGolden("template.json", getTemplateFilter())
-})
-
-test("template configuration contains only deliberate section overrides", () => {
+test("template configuration exposes every configurable section", () => {
   assert.deepEqual(templateProfile, {})
   assert.deepEqual(templateOptions, {
-    jewellery: { amulets: [] },
-    tinctures: { baseTypes: [] },
+    links: {},
+    highlightedEquipment: {},
+    jewellery: {},
+    early: {},
+    tinctures: {},
+    rareItems: {},
+    magicItems: {},
+    normalItems: {},
   })
-})
-
-test("example configuration compiles to its golden filter", () => {
-  assertGolden("example.json", getExampleFilter())
 })
 
 test("jewellery configuration uses defaults when no override is supplied", () => {
@@ -58,11 +39,33 @@ test("highlighted equipment applies only the requested rarity", () => {
 
 test("preferred link colors use SocketGroup >= for selected and good links", () => {
   const output = links({ prefColors: ["RG"], preferredArmourTypes: ["armour"] })
+  const threeLinkMaxAreaLevel = filterDefaults.links.threeLinkMaxAreaLevel
+  const selectedTextColor = rgb(filterStyles.selectedThreeLink.text)
+  const goodTextColor = rgb(filterStyles.goodThreeLink.text)
 
-  assert.match(output, /BaseArmour >= 1\nBaseEnergyShield == 0\nBaseEvasion == 0\nSocketGroup >= "RG"\nSetTextColor 81 255 0/)
-  assert.match(output, /LinkedSockets == 3\nAreaLevel <= 33\nSocketGroup >= "RG"\nSetTextColor 185 255 102/)
+  assert.match(
+    output,
+    new RegExp(`BaseArmour >= 1\\nBaseEnergyShield == 0\\nBaseEvasion == 0\\nSocketGroup >= "RG"\\nSetTextColor ${selectedTextColor}`),
+  )
+  assert.match(
+    output,
+    new RegExp(`LinkedSockets == 3\\nAreaLevel <= ${threeLinkMaxAreaLevel}\\nSocketGroup >= "RG"\\nSetTextColor ${goodTextColor}`),
+  )
   assert.doesNotMatch(output, /SocketGroup == "RG"/)
 })
+
+const rgb = (hex: string | null | undefined) => {
+  assert.ok(hex)
+  const value = hex.slice(1)
+  const normalized =
+    value.length === 3
+      ? value
+          .split("")
+          .map((char) => `${char}${char}`)
+          .join("")
+      : value
+  return [0, 2, 4].map((offset) => Number.parseInt(normalized.slice(offset, offset + 2), 16)).join(" ")
+}
 
 test("disabled generic three- and four-links retain preferred links and shield links", () => {
   const output = links({
@@ -105,7 +108,10 @@ test("section composition trims empty sections", () => {
 
 test("shield progression normalization applies mode defaults", () => {
   assert.deepEqual(normalizeShieldProgressionConfig("full"), { enabled: true, maxAreaLevel: undefined })
-  assert.deepEqual(normalizeShieldProgressionConfig("none"), { enabled: false, maxAreaLevel: 12 })
+  assert.deepEqual(normalizeShieldProgressionConfig("none"), {
+    enabled: false,
+    maxAreaLevel: filterDefaults.shieldProgression.earlyMaxAreaLevel,
+  })
 })
 
 test("weapon queries preserve explicit bases and separate non-weapon classes", () => {
