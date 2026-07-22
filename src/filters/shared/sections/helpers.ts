@@ -9,6 +9,7 @@ import type {
 import { WEAPON_CLASSES as GENERATED_WEAPON_CLASSES, WEAPON_BASE_DATA } from "../../../types/weapon-base-data"
 import { filterDefaults } from "../defaults"
 import { filterStyles, soundFile, styleMixin } from "../styles"
+import { soundFileTTS } from "../../../sounds/paths"
 
 // Section composition helpers
 export const compileRules = (...rules: Array<Rule | null | undefined | false>) => {
@@ -408,6 +409,7 @@ export type LevelingAmuletConfig =
   | {
       shortBaseType: LevelingAmuletShortBaseType
       soundFileName?: SoundFile
+      tts?: TtsFile
     }
 
 export type JewelleryConfig = {
@@ -426,8 +428,11 @@ export const normalizeLevelingAmuletConfig = (entry: LevelingAmuletConfig) => {
     baseType: defaults.baseType,
     shortBaseType,
     soundFileName: typeof entry === "string" ? defaults.soundFileName : (entry.soundFileName ?? defaults.soundFileName),
+    tts: typeof entry === "string" ? undefined : entry.tts,
   }
 }
+
+export type TtsFile = string
 
 // Highlighted equipment
 export type HighlightedBaseTypeConfig = {
@@ -445,6 +450,7 @@ export type HighlightedBaseTypeConfig = {
   maxAreaLevel?: number
   soundId?: NumberRange<1, 17>
   soundFileName?: SoundFile
+  tts?: TtsFile
 }
 
 export type HighlightedEquipmentConfig = {
@@ -504,6 +510,7 @@ const buildHighlightedRule = ({
   maxAreaLevel,
   soundId,
   soundFileName,
+  tts,
 }: {
   selectedRarity?: Rarity
   baseTypes?: readonly BaseType[]
@@ -514,6 +521,7 @@ const buildHighlightedRule = ({
   maxAreaLevel?: number
   soundId?: NumberRange<1, 17>
   soundFileName?: SoundFile
+  tts?: TtsFile
 }) => {
   const style =
     selectedRarity && selectedRarity in highlightedEquipmentStyleMap
@@ -536,7 +544,9 @@ const buildHighlightedRule = ({
     builtRule.socketGroup(socketGroupOperator, ...socketGroups)
   }
 
-  if (soundFileName) {
+  if (tts) {
+    builtRule.tts(soundFileTTS(tts))
+  } else if (soundFileName) {
     builtRule.customSound(soundFile(soundFileName))
   } else if (soundId !== undefined) {
     builtRule.sound(soundId)
@@ -573,6 +583,7 @@ export const buildHighlightedBaseTypeRules = ({
   maxAreaLevel,
   soundId,
   soundFileName,
+  tts,
 }: HighlightedBaseTypeConfig) => {
   const appliedRarities = rarities?.length
     ? rarities.filter((entry): entry is HighlightableRarity => HIGHLIGHTABLE_RARITIES.includes(entry as HighlightableRarity))
@@ -601,6 +612,7 @@ export const buildHighlightedBaseTypeRules = ({
         maxAreaLevel,
         soundId,
         soundFileName,
+        tts,
       }).rarity("==", selectedRarity),
     )
   }
@@ -629,6 +641,7 @@ export const buildHighlightedBaseTypeRules = ({
         maxAreaLevel: effectiveMaxAreaLevel,
         soundId,
         soundFileName,
+        tts,
       }).rarity("==", selectedRarity),
     )
   })
@@ -645,6 +658,7 @@ export const buildHighlightedBaseTypeRules = ({
             maxAreaLevel,
             soundId,
             soundFileName,
+            tts,
           }).rarity("==", selectedRarity),
         )
       : []
@@ -793,16 +807,25 @@ export type ChromaticItemsConfig = {
 // Shared builders for section implementations
 export const buildTierCurrency = (
   style: keyof typeof filterStyles,
-  entries: Array<{ baseTypes: string[]; iconColor: Color; iconShape: Shape; soundId?: NumberRange<1, 17>; soundFileName?: SoundFile }>,
+  entries: Array<{
+    baseTypes: string[]
+    iconColor: Color
+    iconShape: Shape
+    soundId?: NumberRange<1, 17>
+    soundFileName?: SoundFile
+    tts?: TtsFile
+  }>,
 ) =>
   compileRules(
     rule(
-      ...entries.map(({ baseTypes, iconColor, iconShape, soundId, soundFileName }) => {
+      ...entries.map(({ baseTypes, iconColor, iconShape, soundId, soundFileName, tts }) => {
         const builtRule = rule()
           .baseType(...baseTypes)
           .icon(iconColor, iconShape)
 
-        if (soundFileName) {
+        if (tts) {
+          builtRule.tts(soundFileTTS(tts))
+        } else if (soundFileName) {
           builtRule.customSound(soundFile(soundFileName))
         } else if (soundId !== undefined) {
           builtRule.sound(soundId)
