@@ -4,6 +4,7 @@ import path from "node:path"
 import { test } from "node:test"
 import { getFilter as getExampleFilter } from "../src/filters/example"
 import { getFilter as getTemplateFilter } from "../src/filters/template"
+import { buildProfile as templateProfile, buildSpecificOptions as templateOptions } from "../src/filters/template/config"
 import { highlightedEquipment, jewellery } from "../src/filters/shared"
 
 const fixturesPath = path.join(__dirname, "fixtures")
@@ -21,6 +22,14 @@ const assertGolden = (name: string, output: string) => {
 
 test("template configuration compiles to its golden filter", () => {
   assertGolden("template.json", getTemplateFilter())
+})
+
+test("template configuration contains only deliberate section overrides", () => {
+  assert.deepEqual(templateProfile, {})
+  assert.deepEqual(templateOptions, {
+    jewellery: { amulets: [] },
+    tinctures: { baseTypes: [] },
+  })
 })
 
 test("example configuration compiles to its golden filter", () => {

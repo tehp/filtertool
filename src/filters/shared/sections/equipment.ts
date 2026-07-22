@@ -180,7 +180,7 @@ export const preferredWeapons = ({ preferredWeaponItemClasses = [], preferredWea
   return withHeading("Preferred Weapons", compiledRules)
 }
 
-export const highlightedEquipment = ({ highlights = [] }: HighlightedEquipmentConfig) => {
+export const highlightedEquipment = ({ highlights = [] }: HighlightedEquipmentConfig = {}) => {
   const compiledRules = compileRules(...highlights.flatMap(buildHighlightedBaseTypeRules))
 
   if (!compiledRules) {
@@ -503,10 +503,10 @@ export const tinctures = ({ baseTypes = filterDefaults.tinctures.baseTypes }: Ti
   )
 
 export const rareItems = ({
-  preferredArmourTypes,
+  preferredArmourTypes = [],
   maxAreaLevel = filterDefaults.rareItems.maxAreaLevel,
   shieldProgression,
-}: RareItemsConfig & BuildProfile) => {
+}: RareItemsConfig & Partial<BuildProfile>) => {
   const earlyMaxAreaLevel = filterDefaults.campaign.earlyMaxAreaLevel
   const partOneMaxAreaLevel = maxAreaLevel
   const shieldConfig = normalizeShieldProgressionConfig(shieldProgression)

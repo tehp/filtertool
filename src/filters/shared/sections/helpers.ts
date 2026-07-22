@@ -62,7 +62,7 @@ export const REMAINING_EQUIPMENT_CLASSES = [
 
 // Shared build profile and top-level section options
 export type BuildProfile = {
-  preferredArmourTypes: readonly DefenceBaseType[]
+  preferredArmourTypes?: readonly DefenceBaseType[]
   preferredWeaponItemClasses?: readonly WeaponItemClass[]
   preferredWeaponMinAps?: number
   earlyWeapons?: SharedEarlyWeaponConfig
@@ -70,14 +70,14 @@ export type BuildProfile = {
 }
 
 export type BuildSpecificOptions = {
-  links: LinksConfig
-  jewellery: JewelleryConfig
-  rareItems: RareItemsConfig
-  magicItems: MagicItemsConfig
-  normalItems: NormalItemsConfig
-  tinctures: TincturesConfig
-  highlightedEquipment: HighlightedEquipmentConfig
-  early: EarlyConfig
+  links?: LinksConfig
+  jewellery?: JewelleryConfig
+  rareItems?: RareItemsConfig
+  magicItems?: MagicItemsConfig
+  normalItems?: NormalItemsConfig
+  tinctures?: TincturesConfig
+  highlightedEquipment?: HighlightedEquipmentConfig
+  early?: EarlyConfig
 }
 
 // Links
