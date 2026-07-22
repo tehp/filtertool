@@ -18,7 +18,6 @@ or left empty, those sections fall back to the preferred weapon query.
 `shieldProgression` controls:
 - the shield 3-link rule
 - early shield link/base highlights
-- early socket shield handling
 - preferred rare shield highlighting
 - `none`: never
 - `early`: early only, max area level 12 (default value)
@@ -29,7 +28,7 @@ export const buildProfile = {
   preferredArmourTypes: ["armour", "evasion", "armour-evasion"],
   preferredWeaponItemClasses: ["Two Hand Axes", "Two Hand Maces"],
   // preferredWeaponMinAps: 1.3,
-  // Shared early weapon query for early highlights, early sockets, and momentum colors.
+  // Shared early weapon query for early highlights and early sockets.
   // earlyWeapons: {
   //   itemClasses: ["Two Hand Axes", "Two Hand Maces"],
   //   baseTypes: ["Stone Axe", "Driftwood Maul"],

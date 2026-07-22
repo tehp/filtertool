@@ -5,7 +5,7 @@ import { test } from "node:test"
 import { getFilter as getExampleFilter } from "../src/filters/example"
 import { getFilter as getTemplateFilter } from "../src/filters/template"
 import { buildProfile as templateProfile, buildSpecificOptions as templateOptions } from "../src/filters/template/config"
-import { early, highlightedEquipment, jewellery } from "../src/filters/shared"
+import { early, highlightedEquipment, jewellery, links } from "../src/filters/shared"
 import { joinSections } from "../src/filters/shared/sections/composition"
 import { normalizeShieldProgressionConfig } from "../src/filters/shared/sections/options"
 import { resolveMixedItemClassWeaponQuery, resolveWeaponBaseTypes } from "../src/filters/shared/sections/weapon-queries"
@@ -54,6 +54,42 @@ test("highlighted equipment applies only the requested rarity", () => {
 
   assert.match(output, /BaseType "Rusted Hatchet"\nRarity == Normal/)
   assert.doesNotMatch(output, /Rarity == Rare|Rarity == Magic/)
+})
+
+test("preferred link colors use SocketGroup >= for selected and good links", () => {
+  const output = links({ prefColors: ["RG"], preferredArmourTypes: ["armour"] })
+
+  assert.match(output, /BaseArmour >= 1\nBaseEnergyShield == 0\nBaseEvasion == 0\nSocketGroup >= "RG"\nSetTextColor 81 255 0/)
+  assert.match(output, /LinkedSockets == 3\nAreaLevel <= 33\nSocketGroup >= "RG"\nSetTextColor 185 255 102/)
+  assert.doesNotMatch(output, /SocketGroup == "RG"/)
+})
+
+test("disabled generic three- and four-links retain preferred links and shield links", () => {
+  const output = links({
+    prefColors: ["RG"],
+    genericThreeLinksEnabled: false,
+    genericFourLinksEnabled: false,
+    shieldProgression: "full",
+  })
+  const rules = output.split(/\n\nShow\n/).slice(1)
+  const threeLinkRules = rules.filter((entry) => entry.includes("LinkedSockets == 3"))
+  const fourLinkRules = rules.filter((entry) => entry.includes("LinkedSockets == 4"))
+
+  assert.ok(threeLinkRules.some((entry) => entry.includes('SocketGroup >= "RG"')))
+  assert.ok(fourLinkRules.some((entry) => entry.includes('SocketGroup >= "RG"')))
+  assert.ok(threeLinkRules.some((entry) => entry.includes('Class "Shields"') && !entry.includes("SocketGroup")))
+  assert.ok(threeLinkRules.filter((entry) => !entry.includes("SocketGroup")).every((entry) => entry.includes('Class "Shields"')))
+  assert.ok(fourLinkRules.every((entry) => entry.includes("SocketGroup")))
+})
+
+test("highlighted equipment expands and deduplicates socket color patterns", () => {
+  const output = highlightedEquipment({
+    highlights: [{ itemClasses: ["Body Armours"], socketColors: ["RG", "B", "RG"] }],
+  })
+
+  assert.equal((output.match(/SocketGroup >= "RG"/g) ?? []).length, 3)
+  assert.equal((output.match(/SocketGroup >= "B"/g) ?? []).length, 3)
+  assert.doesNotMatch(output, /SocketGroup ==/)
 })
 
 test("early weapon highlights retain their area cap without automatic weapon cutoffs", () => {
