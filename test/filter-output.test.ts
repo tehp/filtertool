@@ -5,7 +5,7 @@ import { test } from "node:test"
 import { getFilter as getExampleFilter } from "../src/filters/example"
 import { getFilter as getTemplateFilter } from "../src/filters/template"
 import { buildProfile as templateProfile, buildSpecificOptions as templateOptions } from "../src/filters/template/config"
-import { highlightedEquipment, jewellery } from "../src/filters/shared"
+import { early, highlightedEquipment, jewellery } from "../src/filters/shared"
 import { joinSections } from "../src/filters/shared/sections/composition"
 import { normalizeShieldProgressionConfig } from "../src/filters/shared/sections/options"
 import { resolveMixedItemClassWeaponQuery, resolveWeaponBaseTypes } from "../src/filters/shared/sections/weapon-queries"
@@ -54,6 +54,13 @@ test("highlighted equipment applies only the requested rarity", () => {
 
   assert.match(output, /BaseType "Rusted Hatchet"\nRarity == Normal/)
   assert.doesNotMatch(output, /Rarity == Rare|Rarity == Magic/)
+})
+
+test("early weapon highlights retain their area cap without automatic weapon cutoffs", () => {
+  const output = early({ earlyWeapons: { baseTypes: ["Rusted Hatchet"], maxAreaLevel: 50 } })
+
+  assert.match(output, /Rarity == Rare\nAreaLevel <= 50\nBaseType "Rusted Hatchet"/)
+  assert.equal((output.match(/AreaLevel <= 50/g) ?? []).length, 3)
 })
 
 test("section composition trims empty sections", () => {
