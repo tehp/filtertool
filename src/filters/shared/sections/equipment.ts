@@ -2,31 +2,23 @@ import rule from "../../../rule"
 import type { NumberRange } from "../../../types"
 import { filterDefaults } from "../defaults"
 import { filterStyles, soundFile, styleMixin } from "../styles"
-import {
-  ARMOUR_CLASSES,
-  buildFlaskSeries,
-  buildHighlightedBaseTypeRules,
+import { soundFileTTS } from "../../../sounds/paths"
+import { compileRules, withHeading } from "./composition"
+import { buildHighlightedBaseTypeRules } from "./highlighted-equipment"
+import { ARMOUR_CLASSES, defenceMixinMap, SOCKETABLE_CLASSES } from "./item-classes"
+import { LEVELING_AMULETS, normalizeLevelingAmuletConfig, normalizeShieldProgressionConfig, normalizeSocketColorPatterns } from "./options"
+import type {
   BuildProfile,
-  buildUtilityFlaskRules,
   ChromaticItemsConfig,
-  compileRules,
-  defenceMixinMap,
   HighlightedEquipmentConfig,
   JewelleryConfig,
-  LEVELING_AMULETS,
   LinksConfig,
   MagicItemsConfig,
   NormalItemsConfig,
-  normalizeLevelingAmuletConfig,
-  normalizeShieldProgressionConfig,
-  normalizeSocketColorPatterns,
   RareItemsConfig,
-  resolveSharedWeaponQuery,
-  resolveWeaponBaseTypes,
-  SOCKETABLE_CLASSES,
   TincturesConfig,
-  withHeading,
-} from "./helpers"
+} from "./options"
+import { buildFlaskSeries, buildUtilityFlaskRules } from "./rule-builders"
 
 export const links = ({
   twoLinkMaxAreaLevel = filterDefaults.links.twoLinkMaxAreaLevel,
@@ -197,21 +189,21 @@ export const jewellery = ({
   beltMaxAreaLevel = filterDefaults.jewellery.beltMaxAreaLevel,
   amuletMaxAreaLevel = filterDefaults.jewellery.amuletMaxAreaLevel,
 }: JewelleryConfig = {}) => {
-  const buildAmuletRules = (baseType: string, soundFileName: string) =>
+  const buildAmuletRules = (baseType: string, soundFileName: string, tts?: string) =>
     [
       { rarity: "Rare" as const, style: filterStyles.rareJewellery },
       { rarity: "Magic" as const, style: filterStyles.magicJewellery },
       { rarity: "Normal" as const, style: filterStyles.jewellery },
-    ].map(({ rarity, style }) =>
-      rule()
+    ].map(({ rarity, style }) => {
+      const builtRule = rule()
         .baseType(baseType)
         .itemClass("Amulets")
         .areaLevel("<=", amuletMaxAreaLevel)
         .rarity("==", rarity)
         .icon("Red", "Cross")
         .mixin(styleMixin(style))
-        .customSound(soundFile(soundFileName)),
-    )
+      return tts ? builtRule.tts(soundFileTTS(tts)) : builtRule.customSound(soundFile(soundFileName))
+    })
 
   return withHeading(
     "Jewellery",
@@ -393,8 +385,8 @@ export const jewellery = ({
         .customSound(soundFile("heavy_belt.mp3")),
       rule().itemClass("Belts").rarity("==", "Rare").mixin(styleMixin(filterStyles.rareJewellery)),
       ...amulets.flatMap((entry) => {
-        const { shortBaseType, soundFileName } = normalizeLevelingAmuletConfig(entry)
-        return buildAmuletRules(shortBaseType, soundFileName)
+        const { shortBaseType, soundFileName, tts } = normalizeLevelingAmuletConfig(entry)
+        return buildAmuletRules(shortBaseType, soundFileName, tts)
       }),
       rule()
         .baseType(...Object.keys(LEVELING_AMULETS), "Turquoise", "Onyx", "Agate", "Citrine")

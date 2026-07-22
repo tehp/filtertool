@@ -1,18 +1,12 @@
 import rule from "../../../rule"
 import { filterDefaults } from "../defaults"
 import { filterStyles, soundFile, styleMixin } from "../styles"
-import {
-  applyHighlightTargets,
-  ARMOUR_CLASSES,
-  BuildProfile,
-  compileRules,
-  EarlyConfig,
-  normalizeShieldProgressionConfig,
-  resolveMixedItemClassWeaponQuery,
-  resolveSharedWeaponQuery,
-  resolveWeaponBaseTypes,
-  withHeading,
-} from "./helpers"
+import { compileRules, withHeading } from "./composition"
+import { applyHighlightTargets } from "./highlighted-equipment"
+import { ARMOUR_CLASSES } from "./item-classes"
+import type { BuildProfile, EarlyConfig } from "./options"
+import { normalizeShieldProgressionConfig } from "./options"
+import { resolveMixedItemClassWeaponQuery, resolveSharedWeaponQuery, resolveWeaponBaseTypes } from "./weapon-queries"
 
 export const twilightStrand = () =>
   withHeading(

@@ -6,6 +6,9 @@ import { getFilter as getExampleFilter } from "../src/filters/example"
 import { getFilter as getTemplateFilter } from "../src/filters/template"
 import { buildProfile as templateProfile, buildSpecificOptions as templateOptions } from "../src/filters/template/config"
 import { highlightedEquipment, jewellery } from "../src/filters/shared"
+import { joinSections } from "../src/filters/shared/sections/composition"
+import { normalizeShieldProgressionConfig } from "../src/filters/shared/sections/options"
+import { resolveMixedItemClassWeaponQuery, resolveWeaponBaseTypes } from "../src/filters/shared/sections/weapon-queries"
 
 const fixturesPath = path.join(__dirname, "fixtures")
 
@@ -51,4 +54,20 @@ test("highlighted equipment applies only the requested rarity", () => {
 
   assert.match(output, /BaseType "Rusted Hatchet"\nRarity == Normal/)
   assert.doesNotMatch(output, /Rarity == Rare|Rarity == Magic/)
+})
+
+test("section composition trims empty sections", () => {
+  assert.equal(joinSections(" first ", "", "\nsecond\n"), "first\n\nsecond")
+})
+
+test("shield progression normalization applies mode defaults", () => {
+  assert.deepEqual(normalizeShieldProgressionConfig("full"), { enabled: true, maxAreaLevel: undefined })
+  assert.deepEqual(normalizeShieldProgressionConfig("none"), { enabled: false, maxAreaLevel: 12 })
+})
+
+test("weapon queries preserve explicit bases and separate non-weapon classes", () => {
+  assert.ok(resolveWeaponBaseTypes({ baseTypes: ["Rusted Hatchet"] }).includes("Rusted Hatchet"))
+  const query = resolveMixedItemClassWeaponQuery({ itemClasses: ["Rings", "One Hand Axes"], minAps: 1 })
+  assert.deepEqual(query.itemClasses, ["Rings"])
+  assert.ok(query.baseTypes.length > 0)
 })

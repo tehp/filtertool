@@ -1,7 +1,8 @@
 import rule from "../../../rule"
 import { filterStyles, styleMixin } from "../styles"
 import { DIV_CARD_HIDE_LIST } from "./div-cards"
-import { compileRules, REMAINING_EQUIPMENT_CLASSES, withHeading } from "./helpers"
+import { compileRules, withHeading } from "./composition"
+import { REMAINING_EQUIPMENT_CLASSES } from "./item-classes"
 
 export const gems = () =>
   withHeading(

@@ -1,5 +1,5 @@
-export type { BuildProfile, BuildSpecificOptions } from "./shared/sections/helpers"
-export { joinSections } from "./shared/sections/helpers"
+export type { BuildProfile, BuildSpecificOptions } from "./shared/sections/options"
+export { joinSections } from "./shared/sections/composition"
 export { filterDefaults } from "./shared/defaults"
 export { getSoundPackFolder, filterStyles, iconMixin, soundFile, styleMixin } from "./shared/styles"
 export { currency, scrolls } from "./shared/sections/currency"
