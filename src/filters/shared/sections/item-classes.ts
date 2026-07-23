@@ -6,6 +6,8 @@ export type DefenceBaseType = "armour" | "evasion" | "es" | "armour-evasion" | "
 
 export const ARMOUR_CLASSES = ["Body Armours", "Gloves", "Boots", "Helmets"] as const satisfies readonly ItemClass[]
 export const SOCKETABLE_CLASSES = [...ARMOUR_CLASSES, "Shields"] as const satisfies readonly ItemClass[]
+export type ArmourItemClass = (typeof ARMOUR_CLASSES)[number]
+export type SocketableItemClass = (typeof SOCKETABLE_CLASSES)[number]
 export type WeaponItemClass = GeneratedWeaponItemClass
 export const WEAPON_CLASSES = GENERATED_WEAPON_CLASSES satisfies readonly WeaponItemClass[]
 export const REMAINING_EQUIPMENT_CLASSES = [

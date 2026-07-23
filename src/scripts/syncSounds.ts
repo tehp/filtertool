@@ -6,9 +6,17 @@ import { getSoundPackTargetDir, SOUND_PACK_SOURCE_DIR } from "../sounds/paths"
 const SOURCE_DIR = `./${SOUND_PACK_SOURCE_DIR}`
 
 export function syncSoundPack() {
-  const files = fs.readdirSync(SOURCE_DIR)
-  const targetDir = getSoundPackTargetDir()
+  if (!fs.existsSync(SOURCE_DIR)) {
+    console.log(`Sound source directory "${SOURCE_DIR}" not found. Run generate-sounds first.`)
+    return
+  }
 
+  const files = fs.readdirSync(SOURCE_DIR)
+  if (files.length === 0) {
+    return
+  }
+
+  const targetDir = getSoundPackTargetDir()
   if (!fs.existsSync(targetDir)) {
     fs.mkdirSync(targetDir, { recursive: true })
   }

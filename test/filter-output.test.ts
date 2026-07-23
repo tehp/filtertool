@@ -37,21 +37,23 @@ test("highlighted equipment applies only the requested rarity", () => {
   assert.doesNotMatch(output, /Rarity == Rare|Rarity == Magic/)
 })
 
-test("preferred link colors use SocketGroup >= for selected and good links", () => {
-  const output = links({ prefColors: ["RG"], preferredArmourTypes: ["armour"] })
+test("selected three-link rules use exact socket group patterns", () => {
+  const output = links({
+    threeLinkPatterns: [{ pattern: "RRG" }],
+    twoLinkPatterns: [{ pattern: "RG" }],
+    goodFourLinks: ["armour"],
+  })
   const threeLinkMaxAreaLevel = filterDefaults.links.threeLinkMaxAreaLevel
   const selectedTextColor = rgb(filterStyles.selectedThreeLink.text)
   const goodTextColor = rgb(filterStyles.goodThreeLink.text)
 
   assert.match(
     output,
-    new RegExp(`BaseArmour >= 1\\nBaseEnergyShield == 0\\nBaseEvasion == 0\\nSocketGroup >= "RG"\\nSetTextColor ${selectedTextColor}`),
+    new RegExp(
+      `SocketGroup == "RRG"[^]*LinkedSockets == 3\\nCustomAlertSound "poeft-sounds-v2/3_body.mp3"[^]*SetTextColor ${selectedTextColor}`,
+    ),
   )
-  assert.match(
-    output,
-    new RegExp(`LinkedSockets == 3\\nAreaLevel <= ${threeLinkMaxAreaLevel}\\nSocketGroup >= "RG"\\nSetTextColor ${goodTextColor}`),
-  )
-  assert.doesNotMatch(output, /SocketGroup == "RG"/)
+  assert.match(output, new RegExp(`LinkedSockets == 3\\nSocketGroup >= "RG"\\n[^]*SetTextColor ${goodTextColor}`))
 })
 
 const rgb = (hex: string | null | undefined) => {
@@ -67,9 +69,10 @@ const rgb = (hex: string | null | undefined) => {
   return [0, 2, 4].map((offset) => Number.parseInt(normalized.slice(offset, offset + 2), 16)).join(" ")
 }
 
-test("disabled generic three- and four-links retain preferred links and shield links", () => {
+test("disabled generic three- and four-links retain selected links and shield links", () => {
   const output = links({
-    prefColors: ["RG"],
+    threeLinkPatterns: [{ pattern: "RRG" }],
+    fourLinkPatterns: [{ pattern: "GGGR" }],
     genericThreeLinksEnabled: false,
     genericFourLinksEnabled: false,
     shieldProgression: "full",
@@ -78,10 +81,9 @@ test("disabled generic three- and four-links retain preferred links and shield l
   const threeLinkRules = rules.filter((entry) => entry.includes("LinkedSockets == 3"))
   const fourLinkRules = rules.filter((entry) => entry.includes("LinkedSockets == 4"))
 
-  assert.ok(threeLinkRules.some((entry) => entry.includes('SocketGroup >= "RG"')))
-  assert.ok(fourLinkRules.some((entry) => entry.includes('SocketGroup >= "RG"')))
-  assert.ok(threeLinkRules.some((entry) => entry.includes('Class "Shields"') && !entry.includes("SocketGroup")))
-  assert.ok(threeLinkRules.filter((entry) => !entry.includes("SocketGroup")).every((entry) => entry.includes('Class "Shields"')))
+  assert.ok(threeLinkRules.some((entry) => entry.includes('SocketGroup == "RRG"')))
+  assert.ok(fourLinkRules.some((entry) => entry.includes('SocketGroup == "GGGR"')))
+  assert.ok(threeLinkRules.some((entry) => entry.includes('Class "Shields"')))
   assert.ok(fourLinkRules.every((entry) => entry.includes("SocketGroup")))
 })
 

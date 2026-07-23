@@ -3,7 +3,7 @@ import type { BaseType, ItemClass, NumberRange, Operator, Rarity, Rule } from ".
 import type { SoundFile } from "../../../sounds"
 import { WEAPON_BASE_DATA } from "../../../types/weapon-base-data"
 import { filterStyles, soundFile, styleMixin } from "../styles"
-import { soundFileTTS } from "../../../sounds/paths"
+import { manifestSoundFile, soundFileTTS } from "../../../sounds/paths"
 import { WEAPON_CLASSES, type WeaponItemClass } from "./item-classes"
 import { type HighlightedBaseTypeConfig, type SocketColorPattern, type TtsFile, normalizeSocketColorPatterns } from "./options"
 import {
@@ -57,6 +57,8 @@ const buildRule = ({
   baseTypes,
   itemClasses,
   socketColor,
+  socketGroups,
+  socketGroupOperator = ">=",
   minAreaLevel,
   maxAreaLevel,
   soundId,
@@ -70,6 +72,8 @@ const buildRule = ({
   baseTypes?: readonly BaseType[]
   itemClasses?: readonly ItemClass[]
   socketColor?: SocketColorPattern
+  socketGroups?: readonly string[]
+  socketGroupOperator?: Operator
   minAreaLevel?: number
   maxAreaLevel?: number
   soundId?: NumberRange<1, 17>
@@ -96,7 +100,8 @@ const buildRule = ({
   if (legacyConditionOrder)
     applyHighlightTargets(builtRule, { baseTypes, itemClasses }).mixin(styleMixin(style)).icon(iconColor, "UpsideDownHouse")
   if (socketColor) builtRule.socketGroup(">=", socketColor)
-  if (tts) builtRule.tts(soundFileTTS(tts))
+  if (socketGroups?.length) builtRule.socketGroup(socketGroupOperator, ...socketGroups)
+  if (tts) builtRule.tts(typeof tts === "string" ? soundFileTTS(tts) : manifestSoundFile(tts))
   else if (soundFileName) builtRule.customSound(soundFile(soundFileName))
   else if (raritySoundIds?.[selectedRarity as HighlightableRarity] !== undefined)
     builtRule.sound(raritySoundIds[selectedRarity as HighlightableRarity]!)
@@ -113,6 +118,8 @@ export const buildHighlightedBaseTypeRules = ({
   itemClasses,
   minAps,
   socketColors,
+  socketGroups,
+  socketGroupOperator = ">=",
   weaponCutoffEnabled,
   weaponCutoffOverlap = 5,
   rarityOperator,
@@ -144,6 +151,8 @@ export const buildHighlightedBaseTypeRules = ({
           baseTypes: selectedBaseTypes?.length ? selectedBaseTypes : undefined,
           itemClasses: selectedItemClasses?.length ? selectedItemClasses : undefined,
           socketColor,
+          socketGroups,
+          socketGroupOperator,
           minAreaLevel,
           maxAreaLevel: maximum,
           soundId,

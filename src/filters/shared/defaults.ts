@@ -33,6 +33,8 @@ export const baseFilterDefaults = {
     threeSocketMaxAreaLevel: GLOBAL_EARLY_MAX_AREA_LEVEL,
     earlyBootsMaxAreaLevel: 24,
     showRustic: true,
+    includeMomentumColors: false,
+    momentumMaxAreaLevel: 11,
   },
   rareItems: {
     maxAreaLevel: GLOBAL_PART_ONE_MAX_AREA_LEVEL,

@@ -8,6 +8,7 @@ const EXCLUDED_FILTERS = new Set(["shared", "template"])
 const main = async () => {
   const filtersRoot = path.join(__dirname, "../filters")
   const filterPath = process.env.FILTER_PATH
+  const skipConfirm = process.argv.includes("--yes")
 
   if (!filterPath) {
     console.log("No filter path set in environment variables.\n")
@@ -28,8 +29,10 @@ const main = async () => {
 
   for (const filterName of filterNames) {
     try {
-      const filterFileName = await exportFilter(filterName, filterPath)
-      console.log(`Successfully exported filter: ${filterFileName}`)
+      const filterFileName = await exportFilter(filterName, filterPath, skipConfirm)
+      if (filterFileName) {
+        console.log(`Successfully exported filter: ${filterFileName}`)
+      }
     } catch (error) {
       console.log(`Error while compiling filter "${filterName}".`, error)
     }

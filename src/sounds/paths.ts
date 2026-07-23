@@ -1,33 +1,37 @@
 import path from "path"
-import { SoundFile } from "../types/sounds/generated-sounds"
+import type { SoundFile } from "../types/sounds/generated-sounds"
+import type { SoundManifestEntry } from "./manifest"
 
 export const SOUND_PACK_SOURCE_DIR = "sounds"
-const SOUND_PACK_TARGET_DIR = "poeft-sounds"
-const FILTERTOOL_SOUNDS_DIR = "filtertool_sounds"
+export const SOUND_PACK_TARGET_DIR_V2 = "poeft-sounds-v2"
 
 const normalizeFolder = (folder: string) => folder.replace(/^[\\/]+|[\\/]+$/g, "")
 
-export const getSoundPackFolder = () => normalizeFolder(process.env.SOUNDS_FOLDER || SOUND_PACK_TARGET_DIR)
-export const getGeneratedSoundPackFolder = () => normalizeFolder(FILTERTOOL_SOUNDS_DIR)
+export function getSoundPackFolder(): string {
+  return normalizeFolder(process.env.SOUNDS_FOLDER || SOUND_PACK_TARGET_DIR_V2)
+}
 
 export function soundFile(file: SoundFile | string): string {
-  const generatedFolder = getGeneratedSoundPackFolder()
-  const soundPackFolder = getSoundPackFolder()
-  if (file.startsWith(`${generatedFolder}/`) || file.startsWith(`${soundPackFolder}/`)) {
+  const packFolder = getSoundPackFolder()
+  if (file.startsWith(`${packFolder}/`)) {
     return file
   }
-  return `${soundPackFolder}/${file}`
+  return `${packFolder}/${file}`
 }
 
 export function soundFileTTS(file: string): string {
-  return `${getGeneratedSoundPackFolder()}/${generatedSoundTextToFileName(file)}`
+  return `${getSoundPackFolder()}/${generatedSoundTextToFileName(file)}`
 }
 
-export function generatedSoundTextToFileName(text: string) {
+export function manifestSoundFile(entry: SoundManifestEntry): string {
+  return `${getSoundPackFolder()}/${entry.id}.mp3`
+}
+
+export function generatedSoundTextToFileName(text: string): string {
   return text.split(" ").join("_") + ".mp3"
 }
 
-export const getSoundPackTargetDir = () => {
+export function getSoundPackTargetDir(): string {
   const filterPath = process.env.FILTER_PATH || ""
   const soundPackFolder = getSoundPackFolder()
   return filterPath ? path.join(filterPath, soundPackFolder) : soundPackFolder
