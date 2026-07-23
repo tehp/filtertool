@@ -6,6 +6,7 @@ import type { DefenceBaseType, WeaponItemClass } from "./item-classes"
 import type { WeaponBaseType } from "./weapon-queries"
 
 export type SocketColorPattern = "R" | "G" | "B" | "RG" | "RB" | "GB" | "RGB"
+export type LinkColor = "R" | "G" | "B"
 export type TtsFile = string | SoundManifestEntry
 export type ShieldProgressionMode = "none" | "early" | "full"
 export type ShieldProgressionConfig = ShieldProgressionMode | { mode?: ShieldProgressionMode; maxAreaLevel?: number }
@@ -26,7 +27,7 @@ export type LinksConfig = {
   twoLinkMaxAreaLevel?: number
   threeLinkMaxAreaLevel?: number
   fourLinkMaxAreaLevel?: number
-  prefColors?: readonly SocketColorPattern[]
+  prefColors?: readonly LinkColor[]
   genericThreeLinksEnabled?: boolean
   genericFourLinksEnabled?: boolean
 }

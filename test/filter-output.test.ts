@@ -77,8 +77,8 @@ describe("links", () => {
   })
 
   test("omits generic three-links when disabled but keeps selected links", () => {
-    const withGenerics = links({ prefColors: ["RG"] })
-    const withoutGenerics = links({ prefColors: ["RG"], genericThreeLinksEnabled: false })
+    const withGenerics = links({ prefColors: ["R", "G"] })
+    const withoutGenerics = links({ prefColors: ["R", "G"], genericThreeLinksEnabled: false })
 
     expect(withGenerics).toMatch("LinkedSockets == 3")
     expect(withoutGenerics).toMatch("LinkedSockets == 3")
@@ -86,8 +86,8 @@ describe("links", () => {
   })
 
   test("omits generic four-links when disabled but keeps selected links", () => {
-    const withGenerics = links({ prefColors: ["RG"] })
-    const withoutGenerics = links({ prefColors: ["RG"], genericFourLinksEnabled: false })
+    const withGenerics = links({ prefColors: ["R", "G"] })
+    const withoutGenerics = links({ prefColors: ["R", "G"], genericFourLinksEnabled: false })
 
     expect(withGenerics).toMatch("LinkedSockets == 4")
     expect(withoutGenerics).toMatch("LinkedSockets == 4")
@@ -103,7 +103,7 @@ describe("links", () => {
   })
 
   test("applies socket group filters when prefColors is set", () => {
-    const output = links({ prefColors: ["RG"] })
+    const output = links({ prefColors: ["R"] })
 
     expect(output).toMatch(/SocketGroup >=/)
   })

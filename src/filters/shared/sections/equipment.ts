@@ -7,7 +7,7 @@ import type { SoundManifestEntry } from "../../../sounds/manifest"
 import { compileRules, withHeading } from "./composition"
 import { buildHighlightedBaseTypeRules } from "./highlighted-equipment"
 import { ARMOUR_CLASSES, defenceMixinMap, SOCKETABLE_CLASSES } from "./item-classes"
-import { LEVELING_AMULETS, normalizeLevelingAmuletConfig, normalizeShieldProgressionConfig, normalizeSocketColorPatterns } from "./options"
+import { LEVELING_AMULETS, normalizeLevelingAmuletConfig, normalizeShieldProgressionConfig } from "./options"
 import type {
   BuildProfile,
   ChromaticItemsConfig,
@@ -32,7 +32,7 @@ export const links = ({
   shieldProgression,
 }: LinksConfig & Partial<BuildProfile>) => {
   const shieldConfig = normalizeShieldProgressionConfig(shieldProgression)
-  const preferredSocketPatterns = normalizeSocketColorPatterns(prefColors)
+  const preferredColors = [...new Set(prefColors)]
   const shieldThreeLinkRule = shieldConfig.enabled
     ? rule().itemClass("Shields").linkedSockets("==", 3).mixin(styleMixin(filterStyles.selectedThreeLink))
     : null
@@ -74,11 +74,11 @@ export const links = ({
 
     const selectedRules = itemClasses.flatMap((itemClass) =>
       preferredArmourTypes.flatMap((defenceType) =>
-        preferredSocketPatterns.map((pattern) =>
+        preferredColors.map((color) =>
           addSound(
             buildBaseRule(itemClass)
               .mixin(defenceMixinMap[defenceType])
-              .socketGroup(">=", pattern)
+              .socketGroup(">=", color)
               .mixin(styleMixin(filterStyles[selectedStyle])),
             itemClass,
           ),
@@ -87,8 +87,8 @@ export const links = ({
     )
 
     const goodRules = itemClasses.flatMap((itemClass) =>
-      preferredSocketPatterns.map((pattern) =>
-        addSound(buildBaseRule(itemClass).socketGroup(">=", pattern).mixin(styleMixin(filterStyles[goodStyle])), itemClass),
+      preferredColors.map((color) =>
+        addSound(buildBaseRule(itemClass).socketGroup(">=", color).mixin(styleMixin(filterStyles[goodStyle])), itemClass),
       ),
     )
 
