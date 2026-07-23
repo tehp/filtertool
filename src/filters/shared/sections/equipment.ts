@@ -1,7 +1,7 @@
 import rule from "../../../rule"
 import type { NumberRange } from "../../../types"
 import { filterDefaults } from "../defaults"
-import { filterStyles, soundFile, styleMixin } from "../styles"
+import { filterStyles, styleMixin } from "../styles"
 import { manifestSoundFile } from "../../../sounds/paths"
 import { MANIFEST_BY_ID } from "../../../sounds/manifest"
 import type { SoundManifestEntry } from "../../../sounds/manifest"
@@ -70,7 +70,8 @@ export const links = ({
     const addSound = (builtRule: ReturnType<typeof buildBaseRule>, itemClass?: (typeof ARMOUR_CLASSES)[number]) => {
       if (linkedSockets === 4) {
         const slot = { "Body Armours": "body", "Gloves": "gloves", "Boots": "boots", "Helmets": "helm" } as const
-        return builtRule.customSound(soundFile(`4_link_${slot[itemClass!]}.mp3`))
+        const id = `4_${slot[itemClass!]}` as keyof typeof MANIFEST_BY_ID
+        return builtRule.tts(manifestSoundFile(MANIFEST_BY_ID[id]))
       }
 
       return builtRule.sound(soundId!)
