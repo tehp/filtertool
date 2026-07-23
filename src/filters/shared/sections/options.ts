@@ -58,8 +58,7 @@ export type HighlightedBaseTypeConfig = {
   baseTypes?: readonly BaseType[]
   itemClasses?: readonly ItemClass[]
   minAps?: number
-  socketGroups?: readonly string[]
-  socketGroupOperator?: Operator
+  linkedSockets?: number
   weaponCutoffEnabled?: boolean
   weaponCutoffOverlap?: number
   rarityOperator?: Operator

@@ -55,8 +55,7 @@ const buildRule = ({
   selectedRarity,
   baseTypes,
   itemClasses,
-  socketGroups,
-  socketGroupOperator = ">=",
+  linkedSockets,
   minAreaLevel,
   maxAreaLevel,
   soundId,
@@ -69,8 +68,7 @@ const buildRule = ({
   selectedRarity?: Rarity
   baseTypes?: readonly BaseType[]
   itemClasses?: readonly ItemClass[]
-  socketGroups?: readonly string[]
-  socketGroupOperator?: Operator
+  linkedSockets?: number
   minAreaLevel?: number
   maxAreaLevel?: number
   soundId?: NumberRange<1, 17>
@@ -96,7 +94,7 @@ const buildRule = ({
   if (maxAreaLevel !== undefined) builtRule.areaLevel("<=", maxAreaLevel)
   if (legacyConditionOrder)
     applyHighlightTargets(builtRule, { baseTypes, itemClasses }).mixin(styleMixin(style)).icon(iconColor, "UpsideDownHouse")
-  if (socketGroups?.length) builtRule.socketGroup(socketGroupOperator, ...socketGroups)
+  if (linkedSockets !== undefined) builtRule.linkedSockets(">=", linkedSockets)
   if (tts) builtRule.tts(typeof tts === "string" ? soundFileTTS(tts) : manifestSoundFile(tts))
   else if (soundFileName) builtRule.customSound(soundFile(soundFileName))
   else if (raritySoundIds?.[selectedRarity as HighlightableRarity] !== undefined)
@@ -113,8 +111,7 @@ export const buildHighlightedBaseTypeRules = ({
   baseTypes,
   itemClasses,
   minAps,
-  socketGroups,
-  socketGroupOperator = ">=",
+  linkedSockets,
   weaponCutoffEnabled,
   weaponCutoffOverlap = 5,
   rarityOperator,
@@ -142,8 +139,7 @@ export const buildHighlightedBaseTypeRules = ({
         selectedRarity,
         baseTypes: selectedBaseTypes?.length ? selectedBaseTypes : undefined,
         itemClasses: selectedItemClasses?.length ? selectedItemClasses : undefined,
-        socketGroups,
-        socketGroupOperator,
+        linkedSockets,
         minAreaLevel,
         maxAreaLevel: maximum,
         soundId,
