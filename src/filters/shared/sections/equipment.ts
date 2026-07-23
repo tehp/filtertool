@@ -61,7 +61,6 @@ export const links = ({
       rule()
         .itemClass(...(itemClass ? [itemClass] : ARMOUR_CLASSES))
         .linkedSockets("==", linkedSockets)
-        .areaLevel("<=", maxAreaLevel)
     const addSound = (builtRule: ReturnType<typeof buildBaseRule>, itemClass?: (typeof ARMOUR_CLASSES)[number]) => {
       if (linkedSockets === 4) {
         const slot = { "Body Armours": "body", "Gloves": "gloves", "Boots": "boots", "Helmets": "helm" } as const
@@ -72,25 +71,28 @@ export const links = ({
       return builtRule
     }
 
-    const selectedRules = itemClasses.flatMap((itemClass) =>
-      preferredArmourTypes.flatMap((defenceType) =>
-        preferredColors.map((color) =>
-          addSound(
-            buildBaseRule(itemClass)
-              .mixin(defenceMixinMap[defenceType])
-              .socketGroup(">=", color)
-              .mixin(styleMixin(filterStyles[selectedStyle])),
-            itemClass,
-          ),
-        ),
-      ),
-    )
+    const selectedRules = itemClasses.flatMap((itemClass) => {
+      const rules = preferredArmourTypes.flatMap((defenceType) =>
+        preferredColors.map((color) => {
+          const base = buildBaseRule(itemClass)
+            .mixin(defenceMixinMap[defenceType])
+            .socketGroup(">=", color)
+            .mixin(styleMixin(filterStyles[selectedStyle]))
+          const withSound = addSound(base, itemClass).areaLevel("<=", maxAreaLevel)
+          return linkedSockets === 4 ? [withSound, base.rarity("!=", "Magic")] : [withSound]
+        }),
+      )
+      return rules.flat()
+    })
 
-    const goodRules = itemClasses.flatMap((itemClass) =>
-      preferredColors.map((color) =>
-        addSound(buildBaseRule(itemClass).socketGroup(">=", color).mixin(styleMixin(filterStyles[goodStyle])), itemClass),
-      ),
-    )
+    const goodRules = itemClasses.flatMap((itemClass) => {
+      const rules = preferredColors.map((color) => {
+        const base = buildBaseRule(itemClass).socketGroup(">=", color).mixin(styleMixin(filterStyles[goodStyle]))
+        const withSound = addSound(base, itemClass).areaLevel("<=", maxAreaLevel)
+        return linkedSockets === 4 ? [withSound, base.rarity("!=", "Magic")] : [withSound]
+      })
+      return rules.flat()
+    })
 
     const normalRules = genericEnabled
       ? itemClasses.map((itemClass) =>
@@ -99,7 +101,7 @@ export const links = ({
               .mixin(styleMixin(filterStyles[normalStyle]))
               .size(linkedSockets === 2 ? 45 : 40),
             itemClass,
-          ),
+          ).areaLevel("<=", maxAreaLevel),
         )
       : []
 
