@@ -42,16 +42,6 @@ describe("highlighted equipment", () => {
     expect(output).not.toMatch(/Rarity == Rare/)
     expect(output).not.toMatch(/Rarity == Magic/)
   })
-
-  test("expands and deduplicates socket color patterns", () => {
-    const output = highlightedEquipment({
-      highlights: [{ itemClasses: ["Body Armours"], socketColors: ["RG", "B", "RG"] }],
-    })
-
-    expect(output.match(/SocketGroup >= "RG"/g) ?? []).toHaveLength(3)
-    expect(output.match(/SocketGroup >= "B"/g) ?? []).toHaveLength(3)
-    expect(output).not.toMatch(/SocketGroup ==/)
-  })
 })
 
 describe("links", () => {

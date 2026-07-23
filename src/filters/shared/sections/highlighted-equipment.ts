@@ -4,7 +4,7 @@ import { WEAPON_BASE_DATA } from "../../../types/weapon-base-data"
 import { filterStyles, soundFile, styleMixin } from "../styles"
 import { manifestSoundFile, soundFileTTS } from "../../../sounds/paths"
 import { WEAPON_CLASSES, type WeaponItemClass } from "./item-classes"
-import { type HighlightedBaseTypeConfig, type SocketColorPattern, type TtsFile, normalizeSocketColorPatterns } from "./options"
+import { type HighlightedBaseTypeConfig, type TtsFile } from "./options"
 import {
   isWeaponBaseType,
   isWeaponItemClass,
@@ -55,7 +55,6 @@ const buildRule = ({
   selectedRarity,
   baseTypes,
   itemClasses,
-  socketColor,
   socketGroups,
   socketGroupOperator = ">=",
   minAreaLevel,
@@ -70,7 +69,6 @@ const buildRule = ({
   selectedRarity?: Rarity
   baseTypes?: readonly BaseType[]
   itemClasses?: readonly ItemClass[]
-  socketColor?: SocketColorPattern
   socketGroups?: readonly string[]
   socketGroupOperator?: Operator
   minAreaLevel?: number
@@ -98,7 +96,6 @@ const buildRule = ({
   if (maxAreaLevel !== undefined) builtRule.areaLevel("<=", maxAreaLevel)
   if (legacyConditionOrder)
     applyHighlightTargets(builtRule, { baseTypes, itemClasses }).mixin(styleMixin(style)).icon(iconColor, "UpsideDownHouse")
-  if (socketColor) builtRule.socketGroup(">=", socketColor)
   if (socketGroups?.length) builtRule.socketGroup(socketGroupOperator, ...socketGroups)
   if (tts) builtRule.tts(typeof tts === "string" ? soundFileTTS(tts) : manifestSoundFile(tts))
   else if (soundFileName) builtRule.customSound(soundFile(soundFileName))
@@ -116,7 +113,6 @@ export const buildHighlightedBaseTypeRules = ({
   baseTypes,
   itemClasses,
   minAps,
-  socketColors,
   socketGroups,
   socketGroupOperator = ">=",
   weaponCutoffEnabled,
@@ -140,30 +136,25 @@ export const buildHighlightedBaseTypeRules = ({
       : [...rarities]
   const weaponClasses = itemClasses?.filter(isWeaponItemClass)
   const nonWeaponClasses = itemClasses?.filter((itemClass) => !isWeaponItemClass(itemClass))
-  const patterns = normalizeSocketColorPatterns(socketColors ?? [])
-  const variants = patterns.length ? patterns : [undefined]
   const makeRules = (selectedBaseTypes?: readonly BaseType[], selectedItemClasses?: readonly ItemClass[], maximum = maxAreaLevel) =>
-    appliedRarities.flatMap((selectedRarity) =>
-      variants.map((socketColor) => {
-        const builtRule = buildRule({
-          selectedRarity,
-          baseTypes: selectedBaseTypes?.length ? selectedBaseTypes : undefined,
-          itemClasses: selectedItemClasses?.length ? selectedItemClasses : undefined,
-          socketColor,
-          socketGroups,
-          socketGroupOperator,
-          minAreaLevel,
-          maxAreaLevel: maximum,
-          soundId,
-          soundFileName,
-          tts,
-          rarityIconColors,
-          raritySoundIds,
-          legacyConditionOrder,
-        })
-        return legacyConditionOrder ? builtRule : builtRule.rarity("==", selectedRarity)
-      }),
-    )
+    appliedRarities.map((selectedRarity) => {
+      const builtRule = buildRule({
+        selectedRarity,
+        baseTypes: selectedBaseTypes?.length ? selectedBaseTypes : undefined,
+        itemClasses: selectedItemClasses?.length ? selectedItemClasses : undefined,
+        socketGroups,
+        socketGroupOperator,
+        minAreaLevel,
+        maxAreaLevel: maximum,
+        soundId,
+        soundFileName,
+        tts,
+        rarityIconColors,
+        raritySoundIds,
+        legacyConditionOrder,
+      })
+      return legacyConditionOrder ? builtRule : builtRule.rarity("==", selectedRarity)
+    })
   if (!(weaponCutoffEnabled ?? (weaponClasses?.length ?? 0) > 0)) {
     const resolved = resolveMixedItemClassWeaponQuery({ itemClasses, baseTypes, minAps })
     return makeRules(resolved.baseTypes, resolved.itemClasses)

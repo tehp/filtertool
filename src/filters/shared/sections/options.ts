@@ -5,7 +5,6 @@ import { filterDefaults } from "../defaults"
 import type { DefenceBaseType, WeaponItemClass } from "./item-classes"
 import type { WeaponBaseType } from "./weapon-queries"
 
-export type SocketColorPattern = "R" | "G" | "B" | "RG" | "RB" | "GB" | "RGB"
 export type LinkColor = "R" | "G" | "B"
 export type TtsFile = string | SoundManifestEntry
 export type ShieldProgressionMode = "none" | "early" | "full"
@@ -59,7 +58,6 @@ export type HighlightedBaseTypeConfig = {
   baseTypes?: readonly BaseType[]
   itemClasses?: readonly ItemClass[]
   minAps?: number
-  socketColors?: readonly SocketColorPattern[]
   socketGroups?: readonly string[]
   socketGroupOperator?: Operator
   weaponCutoffEnabled?: boolean
@@ -107,7 +105,6 @@ export const normalizeLevelingAmuletConfig = (entry: LevelingAmuletConfig) => {
   return { baseType: defaults.baseType, shortBaseType, entry: defaults.entry }
 }
 
-export const normalizeSocketColorPatterns = (patterns: readonly SocketColorPattern[]) => [...new Set(patterns)]
 export const normalizeShieldProgressionConfig = (shieldProgression?: ShieldProgressionConfig): NormalizedShieldProgressionConfig => {
   const defaultMode = filterDefaults.shieldProgression.mode
   const earlyMaxAreaLevel = filterDefaults.shieldProgression.earlyMaxAreaLevel
