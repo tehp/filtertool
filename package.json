@@ -17,7 +17,7 @@
     "generate-sound-types": "ts-node ./src/scripts/generateSoundTypes.ts",
     "generate-sounds": "ts-node ./src/scripts/generateSounds.ts",
     "sync-sounds": "ts-node ./src/scripts/syncSounds.ts",
-    "clean-tts": "ts-node ./src/scripts/localTTS.ts",
+    "clean-tts": "ts-node ./src/scripts/cleanSounds.ts",
     "test": "vitest run",
     "test:watch": "vitest"
   },

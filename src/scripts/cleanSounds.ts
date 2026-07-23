@@ -4,10 +4,6 @@ import { globSync } from "glob"
 import { SOUND_PACK_SOURCE_DIR } from "../sounds/paths"
 import { SOUND_MANIFEST } from "../sounds/manifest"
 
-export async function generateLocalTTS(text: string, outputPath: string): Promise<void> {
-  console.warn("generateLocalTTS is deprecated. Use generateTtsFile from src/sounds/tts instead.")
-}
-
 const ttsConfigRegex: RegExp = /(?<=[\{,]\s*tts\s*:\s*["'`])([^"'`]+)(?=["'`])/g
 const ttsCallRegex: RegExp = /soundFileTTS\(\s*["'`]([^"'`]+)["'`]\s*\)/g
 
@@ -67,8 +63,8 @@ export async function clean(): Promise<void> {
   }
 }
 
-if (require.main === module || (process.argv[1] && process.argv[1].includes("localTTS"))) {
+if (require.main === module || (process.argv[1] && process.argv[1].includes("cleanSounds"))) {
   clean().catch((err) => {
-    console.error("TTS clean failed:", err)
+    console.error("Sound cleanup failed:", err)
   })
 }

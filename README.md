@@ -42,7 +42,12 @@ If your filter folder is `src/filters/yourfilter`, run:
 npm run export yourfilter
 ```
 
-This also regenerates the typed item/sound files and syncs the sound pack before exporting.
+> **Breaking changes:** When a sound pack update changes the folder name (e.g. `poeft-sounds` → `poeft-sounds-v2`), exporting overwrites your existing `.filter` file which now references the new sound folder. A warning is printed before export if an existing filter file is found. To keep your old filter working alongside the new one:
+>
+> - Rename the old `.filter` file in your Path of Exile directory, **or**
+> - Rename your filter source folder under `src/filters/` (e.g. `yourfilter-v2`) to produce a differently-named filter file.
+
+This regenerates typed item/sound files and syncs the sound pack before exporting. On first export (or when sounds are missing) sound files are generated automatically.
 
 To export every tracked filter under `src/filters/` in one go, run:
 
@@ -67,38 +72,53 @@ These overrides are merged on top of the committed shared defaults and styles au
 
 ## Sounds
 
-The repository stores its checked-in sound files in `sounds/`.
+Filter rules use `.tts("Six Link")` to play a custom alert sound. The tool supports two kinds of TTS sounds:
 
-By default, exported filters reference a `poeft-sounds/` folder next to your exported `.filter` file to avoid collisions, and the export step copies the repo sounds there automatically.
+- **Manifest sounds** — defined in `src/sounds/manifest.ts`. These are the canonical sounds for shared filter sections (currency drops, flasks, links, etc.). Their filenames are derived from the `id` field (e.g. `chaos_orb.mp3`), so you can edit the spoken text without breaking existing filters.
+- **Ad-hoc sounds** — any text string passed to `.tts("My Sound")` in a user filter config. The filename is derived from the text itself and is regenerated on export.
+
+### Generating sounds
+
+Generate all manifest and ad-hoc MP3s at once:
+
+```bash
+npm run generate-sounds
+```
+
+### Cleaning up stale sounds
+
+When you change or remove TTS entries, old `.mp3` files can accumulate. Clean them up with:
+
+```bash
+npm run clean-tts
+```
+
+### Sound pack syncing
+
+Exported filters reference a `poeft-sounds-v2/` folder next to your `.filter` file so sounds don't collide with other tools. The export step copies the repo sounds there automatically.
 
 Example:
 
 ```text
 Path of Exile/
   Example.filter
-  poeft-sounds/
-    chaos.mp3
-    regal.mp3
+  poeft-sounds-v2/
+    chaos_orb.mp3
+    six_link.mp3
     ...
 ```
 
-If you want to use a different folder name, set `SOUNDS_FOLDER` in `.env`:
-
-```env
-FILTER_PATH="C:\Users\user\Documents\My Games\Path of Exile"
-SOUNDS_FOLDER="sounds"
-```
-
-You can regenerate sound filename typings with:
-
-```bash
-npm run generate-sound-types
-```
-
-And you can sync the actual sound files into your Path of Exile folder with:
+To sync sounds manually:
 
 ```bash
 npm run sync-sounds
+```
+
+If you want a different folder name, set `SOUNDS_FOLDER` in `.env`:
+
+```env
+FILTER_PATH="C:\Users\user\Documents\My Games\Path of Exile"
+SOUNDS_FOLDER="my-sounds"
 ```
 
 ## Generation

@@ -1,6 +1,6 @@
 import path from "path"
 import { DEFAULT_STYLE_SETTINGS } from "./filters/shared/styles"
-import { createTTSFile } from "./scripts/createTTS"
+import { createTTSFile } from "./sounds/tts"
 import { soundFile } from "./sounds/paths"
 import { Condition, Rule, RuleContent, StyleData } from "./types"
 

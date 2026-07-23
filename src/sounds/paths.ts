@@ -3,7 +3,6 @@ import type { SoundFile } from "../types/sounds/generated-sounds"
 import type { SoundManifestEntry } from "./manifest"
 
 export const SOUND_PACK_SOURCE_DIR = "sounds"
-export const SOUND_PACK_TARGET_DIR_V1 = "poeft-sounds"
 export const SOUND_PACK_TARGET_DIR_V2 = "poeft-sounds-v2"
 
 const normalizeFolder = (folder: string) => folder.replace(/^[\\/]+|[\\/]+$/g, "")

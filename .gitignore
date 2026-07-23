@@ -22,6 +22,9 @@ dist/
 # TTS settings
 .tts-settings.json
 
+# Generated sound files
+/sounds/
+
 # Generated/local filter configs
 src/filters/*
 !src/filters/example/

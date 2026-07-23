@@ -4,8 +4,8 @@ import path from "path"
 import readline from "readline"
 import { globSync } from "glob"
 import { SOUND_MANIFEST } from "../sounds/manifest"
-import { generateTtsFile, readTtsSettings, writeTtsSettings, DEFAULT_TTS_SETTINGS } from "../sounds/tts"
-import { generatedSoundTextToFileName, getSoundPackTargetDir, SOUND_PACK_TARGET_DIR_V2, SOUND_PACK_SOURCE_DIR } from "../sounds/paths"
+import { generateTtsFile, writeTtsSettings } from "../sounds/tts"
+import { generatedSoundTextToFileName, getSoundPackTargetDir, SOUND_PACK_SOURCE_DIR } from "../sounds/paths"
 
 const SOURCE_DIR = `./${SOUND_PACK_SOURCE_DIR}`
 const ttsRegex: RegExp = /(?<=[\{,]\s*tts\s*:\s*["'`])([^"'`]+)(?=["'`])/g
