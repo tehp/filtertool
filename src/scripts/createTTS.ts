@@ -1,6 +1,7 @@
 import fs from "fs"
 import path from "path"
-import { generateLocalTTS } from "./localTTS"
+import { generateTtsFile } from "../sounds/tts"
+import { readTtsSettings } from "../sounds/tts"
 
 const pendingGenerations = new Map<string, Promise<void>>()
 
@@ -18,8 +19,11 @@ export async function createTTSFile(filename: string): Promise<void> {
   const promise = (async () => {
     try {
       const text = path.basename(target, path.extname(target)).replace(/_/g, " ")
+      const settings = readTtsSettings()
       console.log(`[TTS] Generating local TTS for "${text}" -> ${target}`)
-      await generateLocalTTS(text, target)
+      await generateTtsFile(text, target, settings)
+    } catch (error) {
+      console.warn(`[TTS] Failed to generate "${target}":`, error)
     } finally {
       pendingGenerations.delete(target)
     }

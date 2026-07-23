@@ -19,6 +19,9 @@ dist/
 *.swo
 .codex
 
+# TTS settings
+.tts-settings.json
+
 # Generated/local filter configs
 src/filters/*
 !src/filters/example/

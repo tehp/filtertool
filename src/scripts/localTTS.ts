@@ -1,15 +1,9 @@
 import * as fs from "fs"
 import path from "path"
-import { Readable } from "stream"
-import ffmpegPath from "ffmpeg-static"
-import axios from "axios"
-import * as tts from "google-tts-api"
 
 import { globSync } from "glob"
 import { generatedSoundTextToFileName, getGeneratedSoundPackFolder } from "../sounds/paths"
-
-const ffmpeg = require("fluent-ffmpeg")
-ffmpeg.setFfmpegPath(ffmpegPath)
+import { generateTtsFile, DEFAULT_TTS_SETTINGS } from "../sounds/tts"
 
 const SRC_DIR: string = "./src"
 
@@ -19,40 +13,8 @@ function getOutputDir(): string {
   return filterPath ? path.join(filterPath, soundFolder) : soundFolder
 }
 
-async function processedMp3(bufferData: Buffer, outputPath: string, speedMultiplier = 1.6): Promise<void> {
-  return new Promise((resolve, reject) => {
-    const inputStream = Readable.from(bufferData)
-    ffmpeg(inputStream)
-      .audioCodec("libmp3lame")
-      .audioFilters(`atempo=${speedMultiplier},apad=pad_len=22050`)
-      .on("end", () => {
-        resolve()
-      })
-      .on("error", (err: any) => {
-        console.error("An error occurred during audio processing:", err)
-        reject(err)
-      })
-      .save(outputPath)
-  })
-}
-
 export async function generateLocalTTS(text: string, outputPath: string): Promise<void> {
-  try {
-    const url = tts.getAudioUrl(text, {
-      lang: "en", // en-UK, en-AU, en
-      slow: false,
-      host: "https://translate.google.com",
-    })
-    const response = await axios.get(url, { responseType: "arraybuffer" })
-    const dir = path.dirname(outputPath)
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir, { recursive: true })
-    }
-    await processedMp3(Buffer.from(response.data), outputPath)
-    console.log(`Audio file saved to: ${outputPath}`)
-  } catch (error) {
-    console.error("Error converting text to speech:", error)
-  }
+  await generateTtsFile(text, outputPath, DEFAULT_TTS_SETTINGS)
 }
 
 const ttsRegex: RegExp = /(?<=[\{,]\s*tts\s*:\s*["'`])([^"'`]+)(?=["'`])/g
