@@ -2,15 +2,15 @@ import * as fs from "fs"
 import path from "path"
 
 import { globSync } from "glob"
-import { generatedSoundTextToFileName, getGeneratedSoundPackFolder } from "../sounds/paths"
+import { generatedSoundTextToFileName } from "../sounds/paths"
 import { generateTtsFile, DEFAULT_TTS_SETTINGS } from "../sounds/tts"
 
+const TTS_GENERATED_DIR = "filtertool_sounds"
 const SRC_DIR: string = "./src"
 
 function getOutputDir(): string {
   const filterPath = (process.env.FILTER_PATH || "").replace(/[\\/]+$/, "")
-  const soundFolder = getGeneratedSoundPackFolder()
-  return filterPath ? path.join(filterPath, soundFolder) : soundFolder
+  return filterPath ? path.join(filterPath, TTS_GENERATED_DIR) : TTS_GENERATED_DIR
 }
 
 export async function generateLocalTTS(text: string, outputPath: string): Promise<void> {
@@ -23,7 +23,7 @@ export function cleanUnusedTTS(discoveredTexts: Set<string>): void {
   const validFileNames = new Set(Array.from(discoveredTexts).map((text) => generatedSoundTextToFileName(text)))
   const dirsToClean = new Set<string>()
   dirsToClean.add(getOutputDir())
-  dirsToClean.add(getGeneratedSoundPackFolder())
+  dirsToClean.add(TTS_GENERATED_DIR)
 
   dirsToClean.forEach((dir) => {
     if (fs.existsSync(dir)) {

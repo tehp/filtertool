@@ -1,6 +1,7 @@
 import rule from "../../../rule"
 import { filterDefaults } from "../defaults"
-import { filterStyles, soundFile, styleMixin } from "../styles"
+import { filterStyles, styleMixin } from "../styles"
+import { soundFileTTS } from "../../../sounds/paths"
 import {
   applyHighlightTargets,
   ARMOUR_CLASSES,
@@ -152,7 +153,7 @@ export const early = ({
         .areaLevel("<=", earlyBootsMaxAreaLevel)
         .rarity("==", "Rare")
         .mixin(styleMixin(filterStyles.rareArmour))
-        .customSound(soundFile("rare_boots.mp3")),
+        .tts(soundFileTTS("Rare Boots")),
       shieldConfig.enabled &&
         rule()
           .itemClass("Shields")
@@ -167,7 +168,7 @@ export const early = ({
           .areaLevel("<=", earlyMaxAreaLevel)
           .icon("White", "Pentagon")
           .mixin(styleMixin(filterStyles.jewellery))
-          .customSound(soundFile("rustic.mp3")),
+          .tts(soundFileTTS("Rustic Belt")),
       ...(includeMomentumColors
         ? [
             momentumItemClasses.length > 0 && buildMomentumRule().itemClass(...momentumItemClasses),
