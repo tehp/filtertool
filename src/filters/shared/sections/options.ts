@@ -29,6 +29,8 @@ export type LinksConfig = {
   prefColors?: readonly LinkColor[]
   genericThreeLinksEnabled?: boolean
   genericFourLinksEnabled?: boolean
+  threeLinkTtsCutoffLevel?: number
+  fourLinkTtsCutoffLevel?: number
 }
 export type JewelleryConfig = {
   amulets?: readonly LevelingAmuletConfig[]

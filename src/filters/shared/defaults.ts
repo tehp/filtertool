@@ -14,8 +14,10 @@ export const baseFilterDefaults = {
   },
   links: {
     twoLinkMaxAreaLevel: 9,
+    threeLinkTtsCutoffLevel: 24,
     threeLinkMaxAreaLevel: 33,
-    fourLinkMaxAreaLevel: 53,
+    fourLinkTtsCutoffLevel: 50,
+    fourLinkMaxAreaLevel: 61,
   },
   // These do not affect the rare jewellery rules
   jewellery: {

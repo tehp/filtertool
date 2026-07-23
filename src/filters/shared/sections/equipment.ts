@@ -25,6 +25,7 @@ export const links = ({
   twoLinkMaxAreaLevel = filterDefaults.links.twoLinkMaxAreaLevel,
   threeLinkMaxAreaLevel = filterDefaults.links.threeLinkMaxAreaLevel,
   fourLinkMaxAreaLevel = filterDefaults.links.fourLinkMaxAreaLevel,
+  fourLinkTtsCutoffLevel = filterDefaults.links.fourLinkTtsCutoffLevel,
   prefColors = ["R", "G", "B"],
   genericThreeLinksEnabled = true,
   genericFourLinksEnabled = true,
@@ -44,6 +45,7 @@ export const links = ({
   const buildLinkRules = ({
     linkedSockets,
     maxAreaLevel,
+    ttsCutoffLevel,
     normalStyle,
     goodStyle,
     selectedStyle,
@@ -51,57 +53,57 @@ export const links = ({
   }: {
     linkedSockets: 2 | 3 | 4
     maxAreaLevel: number
+    ttsCutoffLevel: number
     normalStyle: keyof typeof filterStyles
     goodStyle: keyof typeof filterStyles
     selectedStyle: keyof typeof filterStyles
     genericEnabled?: boolean
   }) => {
     const itemClasses = linkedSockets === 4 ? ARMOUR_CLASSES : [undefined]
+    const ttsCandidates = linkedSockets === 4
     const buildBaseRule = (itemClass?: (typeof ARMOUR_CLASSES)[number]) =>
       rule()
         .itemClass(...(itemClass ? [itemClass] : ARMOUR_CLASSES))
         .linkedSockets("==", linkedSockets)
-    const addSound = (builtRule: ReturnType<typeof buildBaseRule>, itemClass?: (typeof ARMOUR_CLASSES)[number]) => {
-      if (linkedSockets === 4) {
+    const applySound = (builtRule: ReturnType<typeof buildBaseRule>, itemClass?: (typeof ARMOUR_CLASSES)[number]) => {
+      if (ttsCandidates) {
         const slot = { "Body Armours": "body", "Gloves": "gloves", "Boots": "boots", "Helmets": "helm" } as const
-        const id = `4_${slot[itemClass!]}` as keyof typeof MANIFEST_BY_ID
+        const id = `${linkedSockets}_${slot[itemClass!]}` as keyof typeof MANIFEST_BY_ID
         return builtRule.tts(manifestSoundFile(MANIFEST_BY_ID[id]))
       }
 
       return builtRule
     }
 
-    const selectedRules = itemClasses.flatMap((itemClass) => {
-      const rules = preferredArmourTypes.flatMap((defenceType) =>
-        preferredColors.map((color) => {
+    const selectedRules = itemClasses.flatMap((itemClass) =>
+      preferredArmourTypes.flatMap((defenceType) =>
+        preferredColors.flatMap((color) => {
           const base = buildBaseRule(itemClass)
             .mixin(defenceMixinMap[defenceType])
             .socketGroup(">=", color)
             .mixin(styleMixin(filterStyles[selectedStyle]))
-          const withSound = addSound(base, itemClass).areaLevel("<=", maxAreaLevel)
-          return linkedSockets === 4 ? [withSound, base.rarity("!=", "Magic")] : [withSound]
+          const withSound = applySound(base, itemClass).areaLevel("<=", ttsCutoffLevel)
+          const silent = base.areaLevel("<=", maxAreaLevel)
+          return ttsCandidates ? [withSound, silent] : [silent]
         }),
-      )
-      return rules.flat()
-    })
+      ),
+    )
 
-    const goodRules = itemClasses.flatMap((itemClass) => {
-      const rules = preferredColors.map((color) => {
+    const goodRules = itemClasses.flatMap((itemClass) =>
+      preferredColors.flatMap((color) => {
         const base = buildBaseRule(itemClass).socketGroup(">=", color).mixin(styleMixin(filterStyles[goodStyle]))
-        const withSound = addSound(base, itemClass).areaLevel("<=", maxAreaLevel)
-        return linkedSockets === 4 ? [withSound, base.rarity("!=", "Magic")] : [withSound]
-      })
-      return rules.flat()
-    })
+        const withSound = applySound(base, itemClass).areaLevel("<=", ttsCutoffLevel)
+        const silent = base.areaLevel("<=", maxAreaLevel)
+        return ttsCandidates ? [withSound, silent] : [silent]
+      }),
+    )
 
     const normalRules = genericEnabled
       ? itemClasses.map((itemClass) =>
-          addSound(
-            buildBaseRule(itemClass)
-              .mixin(styleMixin(filterStyles[normalStyle]))
-              .size(linkedSockets === 2 ? 45 : 40),
-            itemClass,
-          ).areaLevel("<=", maxAreaLevel),
+          buildBaseRule(itemClass)
+            .mixin(styleMixin(filterStyles[normalStyle]))
+            .size(linkedSockets === 2 ? 45 : 40)
+            .areaLevel("<=", maxAreaLevel),
         )
       : []
 
@@ -124,6 +126,7 @@ export const links = ({
       ...buildLinkRules({
         linkedSockets: 4,
         maxAreaLevel: fourLinkMaxAreaLevel,
+        ttsCutoffLevel: fourLinkTtsCutoffLevel,
         normalStyle: "fourLink",
         goodStyle: "goodFourLink",
         selectedStyle: "selectedFourLink",
@@ -132,6 +135,7 @@ export const links = ({
       ...buildLinkRules({
         linkedSockets: 3,
         maxAreaLevel: threeLinkMaxAreaLevel,
+        ttsCutoffLevel: 0,
         normalStyle: "threeLink",
         goodStyle: "goodThreeLink",
         selectedStyle: "selectedThreeLink",
@@ -141,6 +145,7 @@ export const links = ({
       ...buildLinkRules({
         linkedSockets: 2,
         maxAreaLevel: twoLinkMaxAreaLevel,
+        ttsCutoffLevel: 0,
         normalStyle: "twoLink",
         goodStyle: "goodTwoLink",
         selectedStyle: "selectedTwoLink",
