@@ -23,6 +23,13 @@ export function resolveFilterPath(): string {
 
 const warn = (text: string) => `\x1b[33m${text}\x1b[0m`
 
+function detectSoundPackFolder(filterFilePath: string): string | null {
+  if (!fs.existsSync(filterFilePath)) return null
+  const content = fs.readFileSync(filterFilePath, "utf-8")
+  const match = content.match(/CustomAlertSound\s+"([^/]+)\//)
+  return match ? match[1] : null
+}
+
 function confirm(question: string): Promise<boolean> {
   const rl = readline.createInterface({ input: process.stdin, output: process.stdout })
   return new Promise((resolve) => {
@@ -60,13 +67,19 @@ export const exportFilter = async (filterName: string, filterPath?: string, skip
   const soundFolder = getSoundPackFolder()
 
   if (filterExists && !skipConfirm) {
-    console.log(`\nExisting filter found: ${filterFileName}`)
-    console.log(`Sound pack folder: ${soundFolder}/`)
-    console.log(
-      warn(
-        "If the sound pack folder changed rename either old filter file or the sound pack folder to avoid overwriting the old filter.\n",
-      ),
-    )
+    const existingSoundFolder = detectSoundPackFolder(filterFilePath)
+    const packFolderChanged = existingSoundFolder !== null && existingSoundFolder !== soundFolder
+
+    if (packFolderChanged) {
+      console.log(`\nExisting filter found: ${filterFileName}`)
+      console.log(`Current sound pack folder: ${soundFolder}/`)
+      console.log(`Filter references: ${existingSoundFolder}/`)
+      console.log(
+        warn("Sound pack folder changed. Rename the old filter file or the old sound pack folder to keep both filters working.\n"),
+      )
+    } else {
+      console.log(`\nExisting filter found: ${filterFileName}`)
+    }
 
     const confirmed = await confirm("Overwrite existing filter file? (y/N) ")
     if (!confirmed) {
