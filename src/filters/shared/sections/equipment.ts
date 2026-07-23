@@ -108,7 +108,7 @@ export const links = ({
       ),
     )
 
-    const goodRules = itemClasses.flatMap((itemClass) =>
+    const colourRules = itemClasses.flatMap((itemClass) =>
       preferredColors.flatMap((color) => {
         const base = () => buildBaseRule(itemClass).socketGroup(">=", color).mixin(styleMixin(filterStyles[goodStyle]))
         const withSound = applySound(base(), itemClass).areaLevel("<=", ttsCutoffLevel)
@@ -116,6 +116,17 @@ export const links = ({
         return ttsCandidates ? [withSound, silent] : [silent]
       }),
     )
+
+    const armourRules = itemClasses.flatMap((itemClass) =>
+      preferredArmourTypes.flatMap((defenceType) => {
+        const base = () => buildBaseRule(itemClass).mixin(defenceMixinMap[defenceType]).mixin(styleMixin(filterStyles[goodStyle]))
+        const withSound = applySound(base(), itemClass).areaLevel("<=", ttsCutoffLevel)
+        const silent = base().areaLevel("<=", maxAreaLevel)
+        return ttsCandidates ? [withSound, silent] : [silent]
+      }),
+    )
+
+    const goodRules = [...colourRules, ...armourRules]
 
     const normalRules = genericEnabled
       ? itemClasses.map((itemClass) =>
