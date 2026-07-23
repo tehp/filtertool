@@ -1,7 +1,7 @@
 import path from "path"
 import { DEFAULT_STYLE_SETTINGS } from "./filters/shared/styles"
 import { createTTSFile } from "./sounds/tts"
-import { soundFile } from "./sounds/paths"
+import { soundFile, SOUND_PACK_SOURCE_DIR } from "./sounds/paths"
 import { Condition, Rule, RuleContent, StyleData } from "./types"
 
 const hexToRgb = (hex: `#${string}`): [number, number, number] => {
@@ -15,14 +15,6 @@ const hexToRgb = (hex: `#${string}`): [number, number, number] => {
       : value
 
   return [parseInt(normalized.slice(0, 2), 16), parseInt(normalized.slice(2, 4), 16), parseInt(normalized.slice(4, 6), 16)]
-}
-
-const filterPath = process.env.FILTER_PATH || ""
-
-const getSoundDiskPath = (file: string) => {
-  const relPath = soundFile(file)
-  const cleanedFilterPath = filterPath.replace(/[\\/]+$/, "")
-  return cleanedFilterPath ? path.join(cleanedFilterPath, relPath) : relPath
 }
 
 /* Rule content
@@ -141,7 +133,7 @@ const rule = (...rules: Rule[]): Rule => {
     tts(file, volume = 300, generate = true) {
       const relPath = soundFile(file)
       if (generate) {
-        createTTSFile(getSoundDiskPath(relPath))
+        createTTSFile(path.join(SOUND_PACK_SOURCE_DIR, path.basename(file)))
       }
       this.content.set("CustomAlertSound", `"${relPath}" ${volume}`)
       return this

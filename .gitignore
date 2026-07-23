@@ -24,6 +24,7 @@ dist/
 
 # Generated sound files
 /sounds/
+/poeft-sounds-v2/
 
 # Generated/local filter configs
 src/filters/*
