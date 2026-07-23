@@ -8,7 +8,8 @@ export async function generateLocalTTS(text: string, outputPath: string): Promis
   console.warn("generateLocalTTS is deprecated. Use generateTtsFile from src/sounds/tts instead.")
 }
 
-const ttsRegex: RegExp = /(?<=[\{,]\s*tts\s*:\s*["'`])([^"'`]+)(?=["'`])/g
+const ttsConfigRegex: RegExp = /(?<=[\{,]\s*tts\s*:\s*["'`])([^"'`]+)(?=["'`])/g
+const ttsCallRegex: RegExp = /soundFileTTS\(\s*["'`]([^"'`]+)["'`]\s*\)/g
 
 function discoverReferencedTexts(): Set<string> {
   const texts = new Set<string>()
@@ -20,10 +21,14 @@ function discoverReferencedTexts(): Set<string> {
   const files = globSync("./src/filters/**/*.ts")
   for (const file of files) {
     const content = fs.readFileSync(file, "utf-8")
-    ttsRegex.lastIndex = 0
+    ttsConfigRegex.lastIndex = 0
     let match: RegExpExecArray | null
-    while ((match = ttsRegex.exec(content)) !== null) {
+    while ((match = ttsConfigRegex.exec(content)) !== null) {
       texts.add(match[0])
+    }
+    ttsCallRegex.lastIndex = 0
+    while ((match = ttsCallRegex.exec(content)) !== null) {
+      texts.add(match[1])
     }
   }
 
