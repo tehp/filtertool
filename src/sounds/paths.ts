@@ -2,12 +2,13 @@ import path from "path"
 import { SoundFile } from "../types/sounds/generated-sounds"
 
 export const SOUND_PACK_SOURCE_DIR = "sounds"
-const SOUND_PACK_TARGET_DIR = "poeft-sounds"
+export const SOUND_PACK_TARGET_DIR_V1 = "poeft-sounds"
+export const SOUND_PACK_TARGET_DIR_V2 = "poeft-sounds-v2"
 const FILTERTOOL_SOUNDS_DIR = "filtertool_sounds"
 
 const normalizeFolder = (folder: string) => folder.replace(/^[\\/]+|[\\/]+$/g, "")
 
-export const getSoundPackFolder = () => normalizeFolder(process.env.SOUNDS_FOLDER || SOUND_PACK_TARGET_DIR)
+export const getSoundPackFolder = () => normalizeFolder(process.env.SOUNDS_FOLDER || SOUND_PACK_TARGET_DIR_V2)
 export const getGeneratedSoundPackFolder = () => normalizeFolder(FILTERTOOL_SOUNDS_DIR)
 
 export function soundFile(file: SoundFile | string): string {
@@ -20,7 +21,7 @@ export function soundFile(file: SoundFile | string): string {
 }
 
 export function soundFileTTS(file: string): string {
-  return `${getGeneratedSoundPackFolder()}/${generatedSoundTextToFileName(file)}`
+  return `${getSoundPackFolder()}/${generatedSoundTextToFileName(file)}`
 }
 
 export function generatedSoundTextToFileName(text: string) {

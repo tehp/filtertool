@@ -2,10 +2,15 @@ import "dotenv/config"
 import fs from "fs"
 import path from "path"
 import { format, resolveConfig } from "prettier"
-import { SOUND_PACK_SOURCE_DIR } from "../sounds/paths"
+import { SOUND_PACK_SOURCE_DIR, SOUND_PACK_TARGET_DIR_V2 } from "../sounds/paths"
 
-const SOURCE_DIR = `./${SOUND_PACK_SOURCE_DIR}`
+const V2_DIR = `./${SOUND_PACK_TARGET_DIR_V2}`
+const LEGACY_DIR = `./${SOUND_PACK_SOURCE_DIR}`
 const OUTPUT_FILE = "./src/types/sounds/generated-sounds.ts"
+
+function getSourceDir(): string {
+  return fs.existsSync(V2_DIR) ? V2_DIR : LEGACY_DIR
+}
 
 async function writeFormattedFile(filePath: string, content: string) {
   const prettierConfig = await resolveConfig(filePath)
@@ -14,7 +19,8 @@ async function writeFormattedFile(filePath: string, content: string) {
 }
 
 export async function generateSoundTypes() {
-  const files = fs.readdirSync(SOURCE_DIR).sort((left, right) => {
+  const sourceDir = getSourceDir()
+  const files = fs.readdirSync(sourceDir).sort((left, right) => {
     const caseInsensitiveCompare = left.toLowerCase().localeCompare(right.toLowerCase(), "en")
     return caseInsensitiveCompare !== 0 ? caseInsensitiveCompare : left.localeCompare(right, "en")
   })
