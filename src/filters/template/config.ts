@@ -2,6 +2,7 @@ import { type BuildProfile, type BuildSpecificOptions } from "../shared"
 
 // Build-wide preferences used by links, weapons, early items, and shields.
 export const buildProfile = {
+  // prefColors: ["R", "G", "B"],
   // preferredArmourTypes: ["armour", "evasion", "armour-evasion"],
   // preferredWeaponItemClasses: ["Two Hand Axes", "Two Hand Maces"],
   // preferredWeaponMinAps: 1.3,
@@ -15,7 +16,6 @@ export const buildProfile = {
 
 export const buildSpecificOptions = {
   links: {
-    // prefColors: ["RG"],
     // twoLinkMaxAreaLevel: 9,
     // threeLinkMaxAreaLevel: 33,
     // fourLinkMaxAreaLevel: 53,

@@ -14,6 +14,7 @@ export const baseFilterDefaults = {
   },
   links: {
     twoLinkMaxAreaLevel: 9,
+    threeLinkTtsCutoffLevel: 23,
     threeLinkMaxAreaLevel: 33,
     fourLinkTtsCutoffLevel: 50,
     fourLinkMaxAreaLevel: 61,

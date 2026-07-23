@@ -21,15 +21,16 @@ export type BuildProfile = {
   preferredWeaponMinAps?: number
   earlyWeapons?: SharedEarlyWeaponConfig
   shieldProgression?: ShieldProgressionConfig
+  prefColors?: readonly LinkColor[]
 }
 export type LinksConfig = {
   twoLinkMaxAreaLevel?: number
   threeLinkMaxAreaLevel?: number
   fourLinkMaxAreaLevel?: number
-  prefColors?: readonly LinkColor[]
   genericThreeLinksEnabled?: boolean
   genericFourLinksEnabled?: boolean
   fourLinkTtsCutoffLevel?: number
+  threeLinkTtsCutoffLevel?: number
 }
 export type JewelleryConfig = {
   amulets?: readonly LevelingAmuletConfig[]

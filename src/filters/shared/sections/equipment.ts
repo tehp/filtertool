@@ -26,6 +26,7 @@ export const links = ({
   threeLinkMaxAreaLevel = filterDefaults.links.threeLinkMaxAreaLevel,
   fourLinkMaxAreaLevel = filterDefaults.links.fourLinkMaxAreaLevel,
   fourLinkTtsCutoffLevel = filterDefaults.links.fourLinkTtsCutoffLevel,
+  threeLinkTtsCutoffLevel = filterDefaults.links.threeLinkTtsCutoffLevel,
   prefColors = ["R", "G", "B"],
   genericThreeLinksEnabled = true,
   genericFourLinksEnabled = true,
@@ -34,12 +35,29 @@ export const links = ({
 }: LinksConfig & Partial<BuildProfile>) => {
   const shieldConfig = normalizeShieldProgressionConfig(shieldProgression)
   const preferredColors = [...new Set(prefColors)]
-  const shieldThreeLinkRule = shieldConfig.enabled
-    ? rule().itemClass("Shields").linkedSockets("==", 3).mixin(styleMixin(filterStyles.selectedThreeLink))
-    : null
+  const shieldThreeLinkRules: ReturnType<typeof rule>[] = []
 
-  if (shieldThreeLinkRule && shieldConfig.maxAreaLevel !== undefined) {
-    shieldThreeLinkRule.areaLevel("<=", shieldConfig.maxAreaLevel)
+  if (shieldConfig.enabled) {
+    const withSoundMax =
+      shieldConfig.maxAreaLevel !== undefined ? Math.min(threeLinkTtsCutoffLevel, shieldConfig.maxAreaLevel) : threeLinkTtsCutoffLevel
+
+    shieldThreeLinkRules.push(
+      rule()
+        .itemClass("Shields")
+        .linkedSockets("==", 3)
+        .mixin(styleMixin(filterStyles.selectedThreeLink))
+        .tts(manifestSoundFile(MANIFEST_BY_ID["3_shield"]))
+        .areaLevel("<=", withSoundMax),
+    )
+
+    const silentNeeded = shieldConfig.maxAreaLevel === undefined || shieldConfig.maxAreaLevel > threeLinkTtsCutoffLevel
+    if (silentNeeded) {
+      const silent = rule().itemClass("Shields").linkedSockets("==", 3).mixin(styleMixin(filterStyles.selectedThreeLink))
+      if (shieldConfig.maxAreaLevel !== undefined) {
+        silent.areaLevel("<=", shieldConfig.maxAreaLevel)
+      }
+      shieldThreeLinkRules.push(silent)
+    }
   }
 
   const buildLinkRules = ({
@@ -59,8 +77,8 @@ export const links = ({
     selectedStyle: keyof typeof filterStyles
     genericEnabled?: boolean
   }) => {
-    const itemClasses = linkedSockets === 4 ? ARMOUR_CLASSES : [undefined]
-    const ttsCandidates = linkedSockets === 4
+    const itemClasses = linkedSockets >= 3 ? ARMOUR_CLASSES : [undefined]
+    const ttsCandidates = linkedSockets >= 3
     const buildBaseRule = (itemClass?: (typeof ARMOUR_CLASSES)[number]) =>
       rule()
         .itemClass(...(itemClass ? [itemClass] : ARMOUR_CLASSES))
@@ -78,12 +96,13 @@ export const links = ({
     const selectedRules = itemClasses.flatMap((itemClass) =>
       preferredArmourTypes.flatMap((defenceType) =>
         preferredColors.flatMap((color) => {
-          const base = buildBaseRule(itemClass)
-            .mixin(defenceMixinMap[defenceType])
-            .socketGroup(">=", color)
-            .mixin(styleMixin(filterStyles[selectedStyle]))
-          const withSound = applySound(base, itemClass).areaLevel("<=", ttsCutoffLevel)
-          const silent = base.areaLevel("<=", maxAreaLevel)
+          const base = () =>
+            buildBaseRule(itemClass)
+              .mixin(defenceMixinMap[defenceType])
+              .socketGroup(">=", color)
+              .mixin(styleMixin(filterStyles[selectedStyle]))
+          const withSound = applySound(base(), itemClass).areaLevel("<=", ttsCutoffLevel)
+          const silent = base().areaLevel("<=", maxAreaLevel)
           return ttsCandidates ? [withSound, silent] : [silent]
         }),
       ),
@@ -91,9 +110,9 @@ export const links = ({
 
     const goodRules = itemClasses.flatMap((itemClass) =>
       preferredColors.flatMap((color) => {
-        const base = buildBaseRule(itemClass).socketGroup(">=", color).mixin(styleMixin(filterStyles[goodStyle]))
-        const withSound = applySound(base, itemClass).areaLevel("<=", ttsCutoffLevel)
-        const silent = base.areaLevel("<=", maxAreaLevel)
+        const base = () => buildBaseRule(itemClass).socketGroup(">=", color).mixin(styleMixin(filterStyles[goodStyle]))
+        const withSound = applySound(base(), itemClass).areaLevel("<=", ttsCutoffLevel)
+        const silent = base().areaLevel("<=", maxAreaLevel)
         return ttsCandidates ? [withSound, silent] : [silent]
       }),
     )
@@ -135,13 +154,13 @@ export const links = ({
       ...buildLinkRules({
         linkedSockets: 3,
         maxAreaLevel: threeLinkMaxAreaLevel,
-        ttsCutoffLevel: 0,
+        ttsCutoffLevel: threeLinkTtsCutoffLevel,
         normalStyle: "threeLink",
         goodStyle: "goodThreeLink",
         selectedStyle: "selectedThreeLink",
         genericEnabled: genericThreeLinksEnabled,
       }),
-      shieldThreeLinkRule,
+      ...shieldThreeLinkRules,
       ...buildLinkRules({
         linkedSockets: 2,
         maxAreaLevel: twoLinkMaxAreaLevel,
