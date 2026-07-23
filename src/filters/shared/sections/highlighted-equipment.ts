@@ -130,7 +130,9 @@ export const buildHighlightedBaseTypeRules = ({
     ? configuredRarities.filter((entry): entry is HighlightableRarity => rarities.includes(entry as HighlightableRarity))
     : rarityOperator && rarity && rarities.includes(rarity as HighlightableRarity)
       ? selectRarities(rarityOperator, rarity as HighlightableRarity)
-      : [...rarities]
+      : rarity && !configuredRarities?.length
+        ? [rarity as HighlightableRarity]
+        : [...rarities]
   const weaponClasses = itemClasses?.filter(isWeaponItemClass)
   const nonWeaponClasses = itemClasses?.filter((itemClass) => !isWeaponItemClass(itemClass))
   const makeRules = (selectedBaseTypes?: readonly BaseType[], selectedItemClasses?: readonly ItemClass[], maximum = maxAreaLevel) =>
