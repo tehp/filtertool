@@ -6,6 +6,7 @@
     "test": "node --test --require ts-node/register --require ./test/setup.ts test/*.test.ts",
     "typecheck": "tsc --noEmit",
     "check": "npm run typecheck && npm test && npm run format:check",
+    "postinstall": "npm run generate-types && npm run generate-sound-types",
     "export": "ts-node ./src/scripts/export.ts",
     "export-all": "ts-node ./src/scripts/exportAll.ts",
     "format": "prettier --write .",

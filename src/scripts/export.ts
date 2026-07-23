@@ -1,8 +1,25 @@
 import "dotenv/config"
 import fs from "fs"
+import os from "os"
 import path from "path"
 import readline from "readline"
 import { getSoundPackFolder, SOUND_PACK_SOURCE_DIR } from "../sounds/paths"
+
+const DEFAULT_WIN_FILTER_PATH = path.join(os.homedir(), "Documents", "My Games", "Path of Exile")
+
+export function resolveFilterPath(): string {
+  const envPath = process.env.FILTER_PATH
+  if (envPath) return envPath
+
+  if (process.platform === "win32" && !envPath) {
+    console.log(`FILTER_PATH not set in .env, defaulting to ${DEFAULT_WIN_FILTER_PATH}`)
+    return DEFAULT_WIN_FILTER_PATH
+  }
+
+  throw new Error(
+    "FILTER_PATH not set in .env and no default is available for this platform. Set FILTER_PATH in your .env file to your Path of Exile directory.",
+  )
+}
 
 const warn = (text: string) => `\x1b[33m${text}\x1b[0m`
 
@@ -16,10 +33,11 @@ function confirm(question: string): Promise<boolean> {
   })
 }
 
-export const exportFilter = async (filterName: string, filterPath = process.env.FILTER_PATH, skipConfirm = false) => {
+export const exportFilter = async (filterName: string, filterPath?: string, skipConfirm = false) => {
   const normalizedFilterName = filterName.toLowerCase()
+  const resolvedPath = filterPath ?? resolveFilterPath()
 
-  if (!filterPath) {
+  if (!resolvedPath) {
     throw new Error("No filter path set in environment variables.")
   }
 
@@ -37,7 +55,7 @@ export const exportFilter = async (filterName: string, filterPath = process.env.
         .join(""),
     ].join("_") + ".filter"
 
-  const filterFilePath = path.join(filterPath, filterFileName)
+  const filterFilePath = path.join(resolvedPath, filterFileName)
   const filterExists = fs.existsSync(filterFilePath)
   const soundFolder = getSoundPackFolder()
 

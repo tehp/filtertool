@@ -1,19 +1,14 @@
 import "dotenv/config"
 import fs from "fs"
 import path from "path"
-import { exportFilter } from "./export"
+import { exportFilter, resolveFilterPath } from "./export"
 
 const EXCLUDED_FILTERS = new Set(["shared", "template"])
 
 const main = async () => {
   const filtersRoot = path.join(__dirname, "../filters")
-  const filterPath = process.env.FILTER_PATH
+  const filterPath = resolveFilterPath()
   const skipConfirm = process.argv.includes("--yes")
-
-  if (!filterPath) {
-    console.log("No filter path set in environment variables.\n")
-    return
-  }
 
   const filterNames = fs
     .readdirSync(filtersRoot, { withFileTypes: true })
