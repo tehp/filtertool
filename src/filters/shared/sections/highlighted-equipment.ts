@@ -1,6 +1,5 @@
 import rule from "../../../rule"
 import type { BaseType, ItemClass, NumberRange, Operator, Rarity, Rule } from "../../../types"
-import type { SoundFile } from "../../../sounds"
 import { WEAPON_BASE_DATA } from "../../../types/weapon-base-data"
 import { filterStyles, soundFile, styleMixin } from "../styles"
 import { manifestSoundFile, soundFileTTS } from "../../../sounds/paths"
@@ -77,7 +76,7 @@ const buildRule = ({
   minAreaLevel?: number
   maxAreaLevel?: number
   soundId?: NumberRange<1, 17>
-  soundFileName?: SoundFile
+  soundFileName?: string
   tts?: TtsFile
   rarityIconColors?: HighlightedBaseTypeConfig["rarityIconColors"]
   raritySoundIds?: HighlightedBaseTypeConfig["raritySoundIds"]

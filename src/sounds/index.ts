@@ -7,7 +7,6 @@ export {
   SOUND_PACK_SOURCE_DIR,
   SOUND_PACK_TARGET_DIR_V2,
 } from "./paths"
-export type { SoundFile } from "../types/sounds/generated-sounds"
 export {
   CURRENCY_SOUNDS,
   JEWELLERY_SOUNDS,

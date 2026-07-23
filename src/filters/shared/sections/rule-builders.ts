@@ -1,6 +1,5 @@
 import rule from "../../../rule"
-import type { Color, Mixin, NumberRange, Shape } from "../../../types"
-import type { SoundFile } from "../../../sounds"
+import type { Color, Mixin, NumberRange, Rule, Shape } from "../../../types"
 import { filterStyles, soundFile, styleMixin } from "../styles"
 import { soundFileTTS, manifestSoundFile } from "../../../sounds/paths"
 import type { SoundManifestEntry } from "../../../sounds/manifest"
@@ -14,7 +13,7 @@ export const buildTierCurrency = (
     iconColor: Color
     iconShape: Shape
     soundId?: NumberRange<1, 17>
-    soundFileName?: SoundFile
+    soundFileName?: string
     tts?: TtsFile
   }>,
 ) =>

@@ -1,5 +1,4 @@
 import path from "path"
-import type { SoundFile } from "../types/sounds/generated-sounds"
 import type { SoundManifestEntry } from "./manifest"
 
 export const SOUND_PACK_SOURCE_DIR = "sounds"
@@ -11,7 +10,7 @@ export function getSoundPackFolder(): string {
   return normalizeFolder(process.env.SOUNDS_FOLDER || SOUND_PACK_TARGET_DIR_V2)
 }
 
-export function soundFile(file: SoundFile | string): string {
+export function soundFile(file: string): string {
   const packFolder = getSoundPackFolder()
   if (file.startsWith(`${packFolder}/`)) {
     return file
