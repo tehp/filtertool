@@ -17,7 +17,9 @@
     "generate-sound-types": "ts-node ./src/scripts/generateSoundTypes.ts",
     "generate-sounds": "ts-node ./src/scripts/generateSounds.ts",
     "sync-sounds": "ts-node ./src/scripts/syncSounds.ts",
-    "clean-tts": "ts-node ./src/scripts/localTTS.ts"
+    "clean-tts": "ts-node ./src/scripts/localTTS.ts",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "keywords": [],
   "author": "",
@@ -26,7 +28,8 @@
     "@types/node": "^20.19.43",
     "prettier": "^3.6.2",
     "ts-node": "^10.9.1",
-    "typescript": "^5.2.2"
+    "typescript": "^5.2.2",
+    "vitest": "^4.1.10"
   },
   "dependencies": {
     "axios": "^1.18.1",
