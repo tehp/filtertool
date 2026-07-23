@@ -16,8 +16,6 @@ export const baseFilterDefaults = {
     twoLinkMaxAreaLevel: 9,
     threeLinkMaxAreaLevel: 33,
     fourLinkMaxAreaLevel: 53,
-    twoLinkSoundId: 2,
-    threeLinkSoundId: 3,
   },
   // These do not affect the rare jewellery rules
   jewellery: {

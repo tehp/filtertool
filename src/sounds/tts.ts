@@ -43,7 +43,7 @@ async function processedMp3(bufferData: Buffer, outputPath: string, speedMultipl
     const inputStream = Readable.from(bufferData)
     ffmpeg(inputStream)
       .audioCodec("libmp3lame")
-      .audioFilters(`atempo=${speedMultiplier},apad=pad_len=22050,treble=g=6`)
+      .audioFilters(`atempo=${speedMultiplier},apad=pad_len=22050,treble=g=6,volume=4dB`)
       .on("end", () => resolve())
       .on("error", (err: any) => reject(err))
       .save(outputPath)

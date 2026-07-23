@@ -1,5 +1,4 @@
 import rule from "../../../rule"
-import type { NumberRange } from "../../../types"
 import { filterDefaults } from "../defaults"
 import { filterStyles, styleMixin } from "../styles"
 import { manifestSoundFile } from "../../../sounds/paths"
@@ -29,15 +28,13 @@ export const links = ({
   prefColors = [],
   genericThreeLinksEnabled = true,
   genericFourLinksEnabled = true,
-  twoLinkSoundId = filterDefaults.links.twoLinkSoundId,
-  threeLinkSoundId = filterDefaults.links.threeLinkSoundId,
   preferredArmourTypes = [],
   shieldProgression,
 }: LinksConfig & Partial<BuildProfile>) => {
   const shieldConfig = normalizeShieldProgressionConfig(shieldProgression)
   const preferredSocketPatterns = normalizeSocketColorPatterns(prefColors)
   const shieldThreeLinkRule = shieldConfig.enabled
-    ? rule().itemClass("Shields").linkedSockets("==", 3).mixin(styleMixin(filterStyles.selectedThreeLink)).sound(threeLinkSoundId)
+    ? rule().itemClass("Shields").linkedSockets("==", 3).mixin(styleMixin(filterStyles.selectedThreeLink))
     : null
 
   if (shieldThreeLinkRule && shieldConfig.maxAreaLevel !== undefined) {
@@ -50,7 +47,6 @@ export const links = ({
     normalStyle,
     goodStyle,
     selectedStyle,
-    soundId,
     genericEnabled = true,
   }: {
     linkedSockets: 2 | 3 | 4
@@ -58,7 +54,6 @@ export const links = ({
     normalStyle: keyof typeof filterStyles
     goodStyle: keyof typeof filterStyles
     selectedStyle: keyof typeof filterStyles
-    soundId?: NumberRange<1, 17>
     genericEnabled?: boolean
   }) => {
     const itemClasses = linkedSockets === 4 ? ARMOUR_CLASSES : [undefined]
@@ -74,7 +69,7 @@ export const links = ({
         return builtRule.tts(manifestSoundFile(MANIFEST_BY_ID[id]))
       }
 
-      return builtRule.sound(soundId!)
+      return builtRule
     }
 
     const selectedRules = itemClasses.flatMap((itemClass) =>
@@ -138,7 +133,6 @@ export const links = ({
         normalStyle: "threeLink",
         goodStyle: "goodThreeLink",
         selectedStyle: "selectedThreeLink",
-        soundId: threeLinkSoundId,
         genericEnabled: genericThreeLinksEnabled,
       }),
       shieldThreeLinkRule,
@@ -148,7 +142,6 @@ export const links = ({
         normalStyle: "twoLink",
         goodStyle: "goodTwoLink",
         selectedStyle: "selectedTwoLink",
-        soundId: twoLinkSoundId,
       }),
     ),
   )

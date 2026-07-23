@@ -29,8 +29,6 @@ export type LinksConfig = {
   prefColors?: readonly SocketColorPattern[]
   genericThreeLinksEnabled?: boolean
   genericFourLinksEnabled?: boolean
-  twoLinkSoundId?: NumberRange<1, 17>
-  threeLinkSoundId?: NumberRange<1, 17>
 }
 export type JewelleryConfig = {
   amulets?: readonly LevelingAmuletConfig[]
