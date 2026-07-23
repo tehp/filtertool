@@ -1,5 +1,5 @@
 import path from "path"
-import { SoundFile } from "../types/sounds/generated-sounds"
+import type { SoundFile } from "../types/sounds/generated-sounds"
 
 export const SOUND_PACK_SOURCE_DIR = "sounds"
 export const SOUND_PACK_TARGET_DIR_V1 = "poeft-sounds"
@@ -7,25 +7,27 @@ export const SOUND_PACK_TARGET_DIR_V2 = "poeft-sounds-v2"
 
 const normalizeFolder = (folder: string) => folder.replace(/^[\\/]+|[\\/]+$/g, "")
 
-export const getSoundPackFolder = () => normalizeFolder(process.env.SOUNDS_FOLDER || SOUND_PACK_TARGET_DIR_V2)
+export function getSoundPackFolder(): string {
+  return normalizeFolder(process.env.SOUNDS_FOLDER || SOUND_PACK_TARGET_DIR_V2)
+}
 
 export function soundFile(file: SoundFile | string): string {
-  const soundPackFolder = getSoundPackFolder()
-  if (file.startsWith(`${soundPackFolder}/`)) {
+  const packFolder = getSoundPackFolder()
+  if (file.startsWith(`${packFolder}/`)) {
     return file
   }
-  return `${soundPackFolder}/${file}`
+  return `${packFolder}/${file}`
 }
 
 export function soundFileTTS(file: string): string {
   return `${getSoundPackFolder()}/${generatedSoundTextToFileName(file)}`
 }
 
-export function generatedSoundTextToFileName(text: string) {
+export function generatedSoundTextToFileName(text: string): string {
   return text.split(" ").join("_") + ".mp3"
 }
 
-export const getSoundPackTargetDir = () => {
+export function getSoundPackTargetDir(): string {
   const filterPath = process.env.FILTER_PATH || ""
   const soundPackFolder = getSoundPackFolder()
   return filterPath ? path.join(filterPath, soundPackFolder) : soundPackFolder
