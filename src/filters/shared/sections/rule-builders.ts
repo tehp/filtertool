@@ -1,28 +1,11 @@
 import rule from "../../../rule"
-import type { Color, Mixin, NumberRange, Rule, Shape } from "../../../types"
+import type { Color, Mixin, NumberRange, Shape } from "../../../types"
 import type { SoundFile } from "../../../sounds"
 import { filterStyles, soundFile, styleMixin } from "../styles"
 import { soundFileTTS, manifestSoundFile } from "../../../sounds/paths"
-import type { SoundManifestEntry, SoundManifestId } from "../../../sounds/manifest"
-import { MANIFEST_BY_ID } from "../../../sounds/manifest"
+import type { SoundManifestEntry } from "../../../sounds/manifest"
 import { compileRules } from "./composition"
-import { ARMOUR_CLASSES, defenceMixinMap, type SocketableItemClass } from "./item-classes"
-import type { GoodFourLinkConfig, TtsFile } from "./options"
-import { getDefenceTypeHighlightColor, getSocketPatternEffectColor } from "./options"
-
-const SLOT_SOUND_SUFFIX = {
-  "Body Armours": "body",
-  "Gloves": "gloves",
-  "Boots": "boots",
-  "Helmets": "helm",
-  "Shields": "shield",
-} as const satisfies Record<SocketableItemClass, string>
-
-function linkTtsFile(linkCount: 3 | 4, itemClass: SocketableItemClass): string {
-  const suffix = SLOT_SOUND_SUFFIX[itemClass]
-  const id = `${linkCount}_${suffix}` as SoundManifestId
-  return manifestSoundFile(MANIFEST_BY_ID[id])
-}
+import type { TtsFile } from "./options"
 
 export const buildTierCurrency = (
   style: keyof typeof filterStyles,
@@ -117,45 +100,3 @@ export const buildUtilityFlaskRules = (entries: Array<{ baseType: string; text: 
       .mixin(styleMixin(filterStyles.utilityFlask))
       .tts(manifestSoundFile(text)),
   )
-
-export const buildItemClassSocketRules = ({
-  linkedSockets,
-  pattern,
-  itemClasses = ARMOUR_CLASSES,
-  maxAreaLevel,
-  style = styleMixin(filterStyles.fourLink),
-}: {
-  linkedSockets?: 2 | 3 | 4
-  pattern: string
-  itemClasses?: readonly SocketableItemClass[]
-  maxAreaLevel?: number
-  style?: Mixin
-}): Rule[] =>
-  itemClasses.map((itemClass) => {
-    const highlightColor = getSocketPatternEffectColor(pattern)
-    const builtRule = rule()
-      .itemClass(itemClass)
-      .socketGroup("==", pattern)
-      .icon(highlightColor, "Diamond")
-      .effect(highlightColor)
-      .mixin(style)
-    if (maxAreaLevel !== undefined) builtRule.areaLevel("<=", maxAreaLevel)
-    if (linkedSockets !== undefined) builtRule.linkedSockets("==", linkedSockets)
-    if (linkedSockets === 3 || linkedSockets === 4) return builtRule.tts(linkTtsFile(linkedSockets, itemClass))
-    return builtRule
-  })
-
-export const buildGoodFourLinkRules = ({ defenceType, maxAreaLevel }: GoodFourLinkConfig) =>
-  ARMOUR_CLASSES.flatMap((itemClass) => {
-    const buildBase = () =>
-      rule()
-        .itemClass(itemClass)
-        .linkedSockets("==", 4)
-        .mixin(defenceMixinMap[defenceType])
-        .icon(getDefenceTypeHighlightColor(defenceType), "Diamond")
-        .effect(getDefenceTypeHighlightColor(defenceType))
-        .mixin(styleMixin(filterStyles.goodFourLink))
-    const ruleWithSound = buildBase().tts(linkTtsFile(4, itemClass))
-    if (maxAreaLevel === undefined) return ruleWithSound
-    return [ruleWithSound.areaLevel("<=", maxAreaLevel), buildBase().areaLevel(">", maxAreaLevel).rarity("!=", "Magic")]
-  })
