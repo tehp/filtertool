@@ -16,6 +16,8 @@ export const baseFilterDefaults = {
     twoLinkMaxAreaLevel: 9,
     threeLinkMaxAreaLevel: 33,
     fourLinkMaxAreaLevel: 53,
+    twoLinkSoundId: 2,
+    threeLinkSoundId: 3,
   },
   // These do not affect the rare jewellery rules
   jewellery: {
@@ -29,9 +31,7 @@ export const baseFilterDefaults = {
     earlyMaxAreaLevel: GLOBAL_EARLY_MAX_AREA_LEVEL,
     twoSocketMaxAreaLevel: 7,
     threeSocketMaxAreaLevel: GLOBAL_EARLY_MAX_AREA_LEVEL,
-    momentumMaxAreaLevel: 20,
     earlyBootsMaxAreaLevel: 24,
-    includeMomentumColors: true,
     showRustic: true,
   },
   rareItems: {

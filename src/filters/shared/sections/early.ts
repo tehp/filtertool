@@ -1,19 +1,12 @@
 import rule from "../../../rule"
 import { filterDefaults } from "../defaults"
 import { filterStyles, soundFile, styleMixin } from "../styles"
-import {
-  applyHighlightTargets,
-  ARMOUR_CLASSES,
-  BuildProfile,
-  compileRules,
-  EarlyConfig,
-  normalizeShieldProgressionConfig,
-  resolveMixedItemClassWeaponQuery,
-  resolveSharedWeaponQuery,
-  resolveWeaponBaseTypes,
-  SOCKETABLE_CLASSES,
-  withHeading,
-} from "./helpers"
+import { compileRules, withHeading } from "./composition"
+import { buildHighlightedBaseTypeRules } from "./highlighted-equipment"
+import { ARMOUR_CLASSES } from "./item-classes"
+import type { BuildProfile, EarlyConfig } from "./options"
+import { normalizeShieldProgressionConfig } from "./options"
+import { resolveSharedWeaponQuery, resolveWeaponBaseTypes } from "./weapon-queries"
 
 export const twilightStrand = () =>
   withHeading(
@@ -79,9 +72,6 @@ export const early = ({
   preferredWeaponMinAps,
   earlyMaxAreaLevel = filterDefaults.campaign.earlyMaxAreaLevel,
   showRustic = filterDefaults.early.showRustic,
-  includeMomentumColors = filterDefaults.early.includeMomentumColors,
-  momentumColors,
-  momentumMaxAreaLevel = filterDefaults.early.momentumMaxAreaLevel,
   shieldProgression,
 }: EarlyConfig & Partial<BuildProfile>) => {
   const resolvedEarlyWeapons = resolveSharedWeaponQuery({
@@ -91,53 +81,6 @@ export const early = ({
   })
   const earlyBootsMaxAreaLevel = filterDefaults.early.earlyBootsMaxAreaLevel
   const shieldConfig = normalizeShieldProgressionConfig(shieldProgression)
-  const defaultMomentumItemClasses = shieldConfig.enabled ? SOCKETABLE_CLASSES : ARMOUR_CLASSES
-  const { itemClasses: momentumItemClasses = [], baseTypes: momentumBaseTypes = [] } = resolveMixedItemClassWeaponQuery({
-    itemClasses: momentumColors?.itemClasses ?? [...defaultMomentumItemClasses, ...resolvedEarlyWeapons.itemClasses],
-    baseTypes: momentumColors?.baseTypes ?? resolvedEarlyWeapons.baseTypes,
-    minAps: momentumColors?.minAps ?? resolvedEarlyWeapons.minAps,
-  })
-  const effectiveMomentumMaxAreaLevel = momentumColors?.maxAreaLevel ?? momentumMaxAreaLevel
-  const buildMomentumRule = () =>
-    rule()
-      .socketGroup(">=", "RGG")
-      .areaLevel("<=", effectiveMomentumMaxAreaLevel)
-      .mixin(styleMixin(filterStyles.momentum))
-      .icon("Orange", "Kite")
-  const buildWeaponHighlightRules = ({
-    baseTypes,
-    itemClasses,
-    minAps,
-    maxAreaLevel = earlyMaxAreaLevel,
-  }: {
-    baseTypes?: readonly string[]
-    itemClasses?: readonly string[]
-    minAps?: number
-    maxAreaLevel?: number
-  }) => {
-    const { itemClasses: resolvedItemClasses, baseTypes: resolvedBaseTypes } = resolveMixedItemClassWeaponQuery({
-      itemClasses,
-      baseTypes,
-      minAps,
-    })
-    const hasTargets = (resolvedItemClasses?.length ?? 0) > 0 || (resolvedBaseTypes?.length ?? 0) > 0
-
-    if (!hasTargets) {
-      return []
-    }
-
-    const buildBaseRule = (rarity: "Rare" | "Magic" | "Normal") =>
-      applyHighlightTargets(rule().rarity("==", rarity).areaLevel("<=", maxAreaLevel), {
-        baseTypes: resolvedBaseTypes.length > 0 ? resolvedBaseTypes : undefined,
-        itemClasses: resolvedItemClasses,
-      })
-
-    return [
-      buildBaseRule("Rare").mixin(styleMixin(filterStyles.highlightedEquipmentRare)).icon("Yellow", "UpsideDownHouse").sound(3),
-      buildBaseRule("Magic").mixin(styleMixin(filterStyles.highlightedEquipmentMagic)).icon("Blue", "UpsideDownHouse"),
-      buildBaseRule("Normal").mixin(styleMixin(filterStyles.highlightedEquipmentNormal)).icon("Cyan", "UpsideDownHouse"),
-    ]
-  }
   const sharedEarlyWeaponHighlights =
     resolvedEarlyWeapons.baseTypes.length > 0 || resolvedEarlyWeapons.itemClasses.length > 0 || resolvedEarlyWeapons.minAps !== undefined
       ? [resolvedEarlyWeapons]
@@ -146,19 +89,25 @@ export const early = ({
   return withHeading(
     "Early",
     compileRules(
-      ...sharedEarlyWeaponHighlights.flatMap(buildWeaponHighlightRules),
+      ...sharedEarlyWeaponHighlights.flatMap(({ baseTypes, itemClasses, minAps, maxAreaLevel }) =>
+        buildHighlightedBaseTypeRules({
+          baseTypes,
+          itemClasses,
+          minAps,
+          maxAreaLevel: maxAreaLevel ?? earlyMaxAreaLevel,
+          rarities: ["Rare", "Magic", "Normal"],
+          weaponCutoffEnabled: false,
+          rarityIconColors: { Rare: "Yellow", Magic: "Blue" },
+          raritySoundIds: { Rare: 3 },
+          legacyConditionOrder: true,
+        }),
+      ),
       rule()
         .itemClass("Boots")
         .areaLevel("<=", earlyBootsMaxAreaLevel)
         .rarity("==", "Rare")
         .mixin(styleMixin(filterStyles.rareArmour))
         .customSound(soundFile("rare_boots.mp3")),
-      shieldConfig.enabled &&
-        rule()
-          .itemClass("Shields")
-          .socketGroup(">=", "RG")
-          .areaLevel("<=", earlyMaxAreaLevel)
-          .mixin(styleMixin(filterStyles.earlyShieldLink)),
       shieldConfig.enabled && rule().itemClass("Shields").areaLevel("<=", 8).mixin(styleMixin(filterStyles.earlyShieldBase)),
       showRustic &&
         rule()
@@ -168,12 +117,6 @@ export const early = ({
           .icon("White", "Pentagon")
           .mixin(styleMixin(filterStyles.jewellery))
           .customSound(soundFile("rustic.mp3")),
-      ...(includeMomentumColors
-        ? [
-            momentumItemClasses.length > 0 && buildMomentumRule().itemClass(...momentumItemClasses),
-            momentumBaseTypes && momentumBaseTypes.length > 0 && buildMomentumRule().baseType(...momentumBaseTypes),
-          ]
-        : []),
     ),
   )
 }
