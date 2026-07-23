@@ -4,6 +4,7 @@ import { filterStyles, styleMixin } from "../styles"
 import { manifestSoundFile } from "../../../sounds/paths"
 import { MANIFEST_BY_ID } from "../../../sounds/manifest"
 import { compileRules, withHeading } from "./composition"
+import { applyHighlightTargets } from "./highlighted-equipment"
 import { ARMOUR_CLASSES, SOCKETABLE_CLASSES } from "./item-classes"
 import type { BuildProfile, EarlyConfig } from "./options"
 import { normalizeShieldProgressionConfig } from "./options"
@@ -121,11 +122,10 @@ export const early = ({
     }
 
     const buildBaseRule = (rarity: "Rare" | "Magic" | "Normal") =>
-      rule()
-        .rarity("==", rarity)
-        .areaLevel("<=", maxAreaLevel)
-        .baseType(...(resolvedBaseTypes.length > 0 ? resolvedBaseTypes : []))
-        .itemClass(...(resolvedItemClasses?.length ? resolvedItemClasses : []))
+      applyHighlightTargets(rule().rarity("==", rarity).areaLevel("<=", maxAreaLevel), {
+        baseTypes: resolvedBaseTypes.length > 0 ? resolvedBaseTypes : undefined,
+        itemClasses: resolvedItemClasses,
+      })
 
     return [
       buildBaseRule("Rare").mixin(styleMixin(filterStyles.highlightedEquipmentRare)).icon("Yellow", "UpsideDownHouse").sound(3),
