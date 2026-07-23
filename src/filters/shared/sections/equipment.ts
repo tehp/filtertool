@@ -1,7 +1,9 @@
 import rule from "../../../rule"
 import { filterDefaults } from "../defaults"
 import { filterStyles, styleMixin } from "../styles"
-import { soundFileTTS } from "../../../sounds/paths"
+import { manifestSoundFile } from "../../../sounds/paths"
+import { MANIFEST_BY_ID } from "../../../sounds/manifest"
+import type { SoundManifestEntry } from "../../../sounds/manifest"
 import {
   ARMOUR_CLASSES,
   buildFlaskSeries,
@@ -67,8 +69,16 @@ export const links = ({
   return withHeading(
     "Links",
     compileRules(
-      rule().linkedSockets("=", 6).icon("Red", "Diamond").mixin(styleMixin(filterStyles.priorityA)).tts(soundFileTTS("Six Link")),
-      rule().linkedSockets("=", 5).icon("Orange", "Diamond").mixin(styleMixin(filterStyles.priorityB)).tts(soundFileTTS("Five Link")),
+      rule()
+        .linkedSockets("=", 6)
+        .icon("Red", "Diamond")
+        .mixin(styleMixin(filterStyles.priorityA))
+        .tts(manifestSoundFile(MANIFEST_BY_ID.six_link)),
+      rule()
+        .linkedSockets("=", 5)
+        .icon("Orange", "Diamond")
+        .mixin(styleMixin(filterStyles.priorityB))
+        .tts(manifestSoundFile(MANIFEST_BY_ID.five_link)),
       ...fourLinkPatterns.flatMap((entry) => {
         const { pattern, maxAreaLevel, itemClasses } = normalizeSocketPatternConfig<FourLinkPattern>(entry)
 
@@ -160,7 +170,13 @@ export const links = ({
 export const sixSockets = () =>
   withHeading(
     "Six Sockets",
-    compileRules(rule().sockets("==", 6).icon("Grey", "Diamond").mixin(styleMixin(filterStyles.sixSocket)).tts(soundFileTTS("Six Socket"))),
+    compileRules(
+      rule()
+        .sockets("==", 6)
+        .icon("Grey", "Diamond")
+        .mixin(styleMixin(filterStyles.sixSocket))
+        .tts(manifestSoundFile(MANIFEST_BY_ID.six_socket)),
+    ),
   )
 
 export const uniques = () =>
@@ -201,7 +217,7 @@ export const jewellery = ({
   beltMaxAreaLevel = filterDefaults.jewellery.beltMaxAreaLevel,
   amuletMaxAreaLevel = filterDefaults.jewellery.amuletMaxAreaLevel,
 }: JewelleryConfig = {}) => {
-  const buildAmuletRules = (baseType: string, text: string) =>
+  const buildAmuletRules = (baseType: string, entry: SoundManifestEntry) =>
     [
       { rarity: "Rare" as const, style: filterStyles.rareJewellery },
       { rarity: "Magic" as const, style: filterStyles.magicJewellery },
@@ -214,7 +230,7 @@ export const jewellery = ({
         .rarity("==", rarity)
         .icon("Red", "Cross")
         .mixin(styleMixin(style))
-        .tts(soundFileTTS(text)),
+        .tts(manifestSoundFile(entry)),
     )
 
   return withHeading(
@@ -226,49 +242,49 @@ export const jewellery = ({
         .rarity("==", "Rare")
         .icon("Pink", "Moon")
         .mixin(styleMixin(filterStyles.rareJewellery))
-        .tts(soundFileTTS("Rare Ring")),
+        .tts(manifestSoundFile(MANIFEST_BY_ID.rare_ring)),
       rule()
         .baseType("Amethyst")
         .itemClass("Rings")
         .rarity("==", "Rare")
         .icon("Brown", "Moon")
         .mixin(styleMixin(filterStyles.rareJewellery))
-        .tts(soundFileTTS("Rare Amethyst Ring")),
+        .tts(manifestSoundFile(MANIFEST_BY_ID.rare_amethyst)),
       rule()
         .baseType("Leather")
         .itemClass("Belts")
         .rarity("==", "Rare")
         .icon("Yellow", "Pentagon")
         .mixin(styleMixin(filterStyles.rareJewellery))
-        .tts(soundFileTTS("Rare Leather Belt")),
+        .tts(manifestSoundFile(MANIFEST_BY_ID.rare_leather)),
       rule()
         .baseType("Heavy")
         .itemClass("Belts")
         .rarity("==", "Rare")
         .icon("Orange", "Pentagon")
         .mixin(styleMixin(filterStyles.rareJewellery))
-        .tts(soundFileTTS("Rare Heavy Belt")),
+        .tts(manifestSoundFile(MANIFEST_BY_ID.rare_heavy)),
       rule()
         .baseType("Rustic")
         .itemClass("Belts")
         .rarity("==", "Rare")
         .icon("White", "Pentagon")
         .mixin(styleMixin(filterStyles.rareJewellery))
-        .tts(soundFileTTS("Rare Rustic Belt")),
+        .tts(manifestSoundFile(MANIFEST_BY_ID.rare_rustic)),
       rule()
         .baseType("Amethyst")
         .itemClass("Rings")
         .rarity("==", "Magic")
         .icon("Cyan", "Moon")
         .mixin(styleMixin(filterStyles.magicJewellery))
-        .tts(soundFileTTS("Amethyst Ring")),
+        .tts(manifestSoundFile(MANIFEST_BY_ID.amethyst_ring)),
       rule()
         .baseType("Amethyst")
         .itemClass("Rings")
         .rarity("==", "Normal")
         .icon("Cyan", "Moon")
         .mixin(styleMixin(filterStyles.jewellery))
-        .tts(soundFileTTS("Amethyst Ring")),
+        .tts(manifestSoundFile(MANIFEST_BY_ID.amethyst_ring)),
       rule()
         .baseType("Iron")
         .itemClass("Rings")
@@ -276,7 +292,7 @@ export const jewellery = ({
         .rarity("==", "Magic")
         .icon("Purple", "Moon")
         .mixin(styleMixin(filterStyles.magicJewellery))
-        .tts(soundFileTTS("Iron Ring")),
+        .tts(manifestSoundFile(MANIFEST_BY_ID.iron_ring)),
       rule()
         .baseType("Iron")
         .itemClass("Rings")
@@ -284,7 +300,7 @@ export const jewellery = ({
         .rarity("==", "Normal")
         .icon("Purple", "Moon")
         .mixin(styleMixin(filterStyles.jewellery))
-        .tts(soundFileTTS("Iron Ring")),
+        .tts(manifestSoundFile(MANIFEST_BY_ID.iron_ring)),
       rule()
         .baseType("Coral")
         .itemClass("Rings")
@@ -306,7 +322,7 @@ export const jewellery = ({
         .rarity("==", "Magic")
         .icon("Cyan", "Moon")
         .mixin(styleMixin(filterStyles.magicJewellery))
-        .tts(soundFileTTS("Sapphire Ring")),
+        .tts(manifestSoundFile(MANIFEST_BY_ID.sapphire_ring)),
       rule()
         .baseType("Sapphire")
         .itemClass("Rings")
@@ -314,7 +330,7 @@ export const jewellery = ({
         .rarity("==", "Normal")
         .icon("Cyan", "Moon")
         .mixin(styleMixin(filterStyles.jewellery))
-        .tts(soundFileTTS("Sapphire Ring")),
+        .tts(manifestSoundFile(MANIFEST_BY_ID.sapphire_ring)),
       rule()
         .baseType("Ruby")
         .itemClass("Rings")
@@ -322,7 +338,7 @@ export const jewellery = ({
         .rarity("==", "Magic")
         .icon("Red", "Moon")
         .mixin(styleMixin(filterStyles.magicJewellery))
-        .tts(soundFileTTS("Ruby Ring")),
+        .tts(manifestSoundFile(MANIFEST_BY_ID.ruby_ring)),
       rule()
         .baseType("Ruby")
         .itemClass("Rings")
@@ -330,7 +346,7 @@ export const jewellery = ({
         .rarity("==", "Normal")
         .icon("Red", "Moon")
         .mixin(styleMixin(filterStyles.jewellery))
-        .tts(soundFileTTS("Ruby Ring")),
+        .tts(manifestSoundFile(MANIFEST_BY_ID.ruby_ring)),
       rule()
         .baseType("Topaz")
         .itemClass("Rings")
@@ -338,7 +354,7 @@ export const jewellery = ({
         .rarity("==", "Magic")
         .icon("Yellow", "Moon")
         .mixin(styleMixin(filterStyles.magicJewellery))
-        .tts(soundFileTTS("Topaz Ring")),
+        .tts(manifestSoundFile(MANIFEST_BY_ID.topaz_ring)),
       rule()
         .baseType("Topaz")
         .itemClass("Rings")
@@ -346,7 +362,7 @@ export const jewellery = ({
         .rarity("==", "Normal")
         .icon("Yellow", "Moon")
         .mixin(styleMixin(filterStyles.jewellery))
-        .tts(soundFileTTS("Topaz Ring")),
+        .tts(manifestSoundFile(MANIFEST_BY_ID.topaz_ring)),
       rule()
         .baseType("Two-Stone")
         .itemClass("Rings")
@@ -354,7 +370,7 @@ export const jewellery = ({
         .rarity("==", "Magic")
         .icon("Green", "Moon")
         .mixin(styleMixin(filterStyles.magicJewellery))
-        .tts(soundFileTTS("Two-Stone Ring")),
+        .tts(manifestSoundFile(MANIFEST_BY_ID.two_stone_ring)),
       rule()
         .baseType("Two-Stone")
         .itemClass("Rings")
@@ -362,7 +378,7 @@ export const jewellery = ({
         .rarity("==", "Normal")
         .icon("Green", "Moon")
         .mixin(styleMixin(filterStyles.jewellery))
-        .tts(soundFileTTS("Two-Stone Ring")),
+        .tts(manifestSoundFile(MANIFEST_BY_ID.two_stone_ring)),
       rule()
         .baseType("Leather")
         .itemClass("Belts")
@@ -370,7 +386,7 @@ export const jewellery = ({
         .rarity("==", "Magic")
         .icon("Yellow", "Pentagon")
         .mixin(styleMixin(filterStyles.magicJewellery))
-        .tts(soundFileTTS("Magic Leather Belt")),
+        .tts(manifestSoundFile(MANIFEST_BY_ID.magic_leather)),
       rule()
         .baseType("Leather")
         .itemClass("Belts")
@@ -378,7 +394,7 @@ export const jewellery = ({
         .rarity("==", "Normal")
         .icon("Yellow", "Pentagon")
         .mixin(styleMixin(filterStyles.jewellery))
-        .tts(soundFileTTS("Leather Belt")),
+        .tts(manifestSoundFile(MANIFEST_BY_ID.leather_belt)),
       rule()
         .baseType("Heavy")
         .itemClass("Belts")
@@ -386,7 +402,7 @@ export const jewellery = ({
         .rarity("==", "Magic")
         .icon("Orange", "Pentagon")
         .mixin(styleMixin(filterStyles.magicJewellery))
-        .tts(soundFileTTS("Magic Heavy Belt")),
+        .tts(manifestSoundFile(MANIFEST_BY_ID.magic_heavy)),
       rule()
         .baseType("Heavy")
         .itemClass("Belts")
@@ -394,11 +410,11 @@ export const jewellery = ({
         .rarity("==", "Normal")
         .icon("Orange", "Pentagon")
         .mixin(styleMixin(filterStyles.jewellery))
-        .tts(soundFileTTS("Heavy Belt")),
+        .tts(manifestSoundFile(MANIFEST_BY_ID.heavy_belt)),
       rule().itemClass("Belts").rarity("==", "Rare").mixin(styleMixin(filterStyles.rareJewellery)),
       ...amulets.flatMap((entry) => {
-        const { shortBaseType, text } = normalizeLevelingAmuletConfig(entry)
-        return buildAmuletRules(shortBaseType, text)
+        const { shortBaseType, entry: amuletEntry } = normalizeLevelingAmuletConfig(entry)
+        return buildAmuletRules(shortBaseType, amuletEntry)
       }),
       rule()
         .baseType(...Object.keys(LEVELING_AMULETS), "Turquoise", "Onyx", "Agate", "Citrine")
@@ -422,21 +438,21 @@ export const chromaticItems = ({
         .socketGroup("==", "RGB")
         .areaLevel("<=", smallMaxAreaLevel)
         .mixin(styleMixin(filterStyles.chromatic))
-        .tts(soundFileTTS("Chromatic Recipe")),
+        .tts(manifestSoundFile(MANIFEST_BY_ID.chromatic_recipe)),
       rule()
         .width("==", 2)
         .height("==", 2)
         .socketGroup("==", "RGB")
         .areaLevel("<=", smallMaxAreaLevel)
         .mixin(styleMixin(filterStyles.chromatic))
-        .tts(soundFileTTS("Chromatic Recipe")),
+        .tts(manifestSoundFile(MANIFEST_BY_ID.chromatic_recipe)),
       rule()
         .width("==", 2)
         .height("==", 4)
         .socketGroup("==", "RGB")
         .areaLevel("<=", largeMaxAreaLevel)
         .mixin(styleMixin(filterStyles.chromatic))
-        .tts(soundFileTTS("Chromatic Recipe")),
+        .tts(manifestSoundFile(MANIFEST_BY_ID.chromatic_recipe)),
     ),
   )
 
@@ -449,15 +465,15 @@ export const flasks = () =>
         iconColor: "Red",
         style: "lifeFlask",
         entries: [
-          { baseTypes: ["Small Life Flask"], maxAreaLevel: 12, text: "Life Flask" },
-          { baseTypes: ["Medium Life Flask"], maxAreaLevel: 16, text: "Medium Life Flask" },
-          { baseTypes: ["Large Life Flask"], maxAreaLevel: 24, text: "Large Life Flask" },
-          { baseTypes: ["Greater Life Flask"], maxAreaLevel: 28, text: "Greater Life Flask" },
-          { baseTypes: ["Grand Life Flask"], maxAreaLevel: 32, text: "Grand Life Flask" },
-          { baseTypes: ["Giant Life Flask"], maxAreaLevel: 35, text: "Giant Life Flask" },
-          { baseTypes: ["Colossal Life Flask"], maxAreaLevel: 40, text: "Colossal Life Flask" },
-          { baseTypes: ["Hallowed Life Flask"], maxAreaLevel: 60, text: "Life Flask" },
-          { baseTypes: ["Divine Life Flask"], text: "Life Flask" },
+          { baseTypes: ["Small Life Flask"], maxAreaLevel: 12, text: MANIFEST_BY_ID.life },
+          { baseTypes: ["Medium Life Flask"], maxAreaLevel: 16, text: MANIFEST_BY_ID.medium_life },
+          { baseTypes: ["Large Life Flask"], maxAreaLevel: 24, text: MANIFEST_BY_ID.large_life },
+          { baseTypes: ["Greater Life Flask"], maxAreaLevel: 28, text: MANIFEST_BY_ID.greater_life },
+          { baseTypes: ["Grand Life Flask"], maxAreaLevel: 32, text: MANIFEST_BY_ID.grand_life },
+          { baseTypes: ["Giant Life Flask"], maxAreaLevel: 35, text: MANIFEST_BY_ID.giant_life },
+          { baseTypes: ["Colossal Life Flask"], maxAreaLevel: 40, text: MANIFEST_BY_ID.colossal_life },
+          { baseTypes: ["Hallowed Life Flask"], maxAreaLevel: 60, text: MANIFEST_BY_ID.life },
+          { baseTypes: ["Divine Life Flask"], text: MANIFEST_BY_ID.life },
         ],
       }),
       ...buildFlaskSeries({
@@ -465,25 +481,25 @@ export const flasks = () =>
         iconColor: "Blue",
         style: "manaFlask",
         entries: [
-          { baseTypes: ["Small Mana Flask"], maxAreaLevel: 12, text: "Mana Flask" },
-          { baseTypes: ["Medium Mana Flask"], maxAreaLevel: 16, text: "Medium Mana Flask" },
-          { baseTypes: ["Large Mana Flask"], maxAreaLevel: 24, text: "Large Mana Flask" },
-          { baseTypes: ["Greater Mana Flask"], maxAreaLevel: 28, text: "Greater Mana Flask" },
-          { baseTypes: ["Grand Mana Flask"], maxAreaLevel: 32, text: "Grand Mana Flask" },
-          { baseTypes: ["Giant Mana Flask"], maxAreaLevel: 36, text: "Giant Mana Flask" },
-          { baseTypes: ["Colossal Mana Flask"], maxAreaLevel: 40, text: "Mana Flask" },
-          { baseTypes: ["Sacred Mana Flask"], maxAreaLevel: 46, text: "Mana Flask" },
-          { baseTypes: ["Hallowed Mana Flask"], maxAreaLevel: 52, text: "Mana Flask" },
-          { baseTypes: ["Sanctified Mana Flask"], maxAreaLevel: 60, text: "Mana Flask" },
-          { baseTypes: ["Eternal Mana Flask", "Divine Mana Flask"], text: "Mana Flask" },
+          { baseTypes: ["Small Mana Flask"], maxAreaLevel: 12, text: MANIFEST_BY_ID.mana },
+          { baseTypes: ["Medium Mana Flask"], maxAreaLevel: 16, text: MANIFEST_BY_ID.medium_mana },
+          { baseTypes: ["Large Mana Flask"], maxAreaLevel: 24, text: MANIFEST_BY_ID.large_mana },
+          { baseTypes: ["Greater Mana Flask"], maxAreaLevel: 28, text: MANIFEST_BY_ID.greater_mana },
+          { baseTypes: ["Grand Mana Flask"], maxAreaLevel: 32, text: MANIFEST_BY_ID.grand_mana },
+          { baseTypes: ["Giant Mana Flask"], maxAreaLevel: 36, text: MANIFEST_BY_ID.giant_mana },
+          { baseTypes: ["Colossal Mana Flask"], maxAreaLevel: 40, text: MANIFEST_BY_ID.mana },
+          { baseTypes: ["Sacred Mana Flask"], maxAreaLevel: 46, text: MANIFEST_BY_ID.mana },
+          { baseTypes: ["Hallowed Mana Flask"], maxAreaLevel: 52, text: MANIFEST_BY_ID.mana },
+          { baseTypes: ["Sanctified Mana Flask"], maxAreaLevel: 60, text: MANIFEST_BY_ID.mana },
+          { baseTypes: ["Eternal Mana Flask", "Divine Mana Flask"], text: MANIFEST_BY_ID.mana },
         ],
       }),
       ...buildUtilityFlaskRules([
-        { baseType: "Jade", text: "Jade Flask" },
-        { baseType: "Quartz", text: "Quartz Flask" },
-        { baseType: "Quicksilver", text: "Quicksilver Flask" },
-        { baseType: "Silver", text: "Silver Flask" },
-        { baseType: "Granite", text: "Granite Flask" },
+        { baseType: "Jade", text: MANIFEST_BY_ID.jade_flask },
+        { baseType: "Quartz", text: MANIFEST_BY_ID.quartz_flask },
+        { baseType: "Quicksilver", text: MANIFEST_BY_ID.quicksilver_flask },
+        { baseType: "Silver", text: MANIFEST_BY_ID.silver_flask },
+        { baseType: "Granite", text: MANIFEST_BY_ID.granite_flask },
       ]),
       rule()
         .itemClass("Utility Flasks")

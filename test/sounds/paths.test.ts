@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from "vitest"
-import { generatedSoundTextToFileName, soundFileTTS } from "../../src/sounds/paths"
+import { generatedSoundTextToFileName, soundFileTTS, manifestSoundFile } from "../../src/sounds/paths"
 
 const V2_FOLDER = "poeft-sounds-v2"
 
@@ -31,5 +31,18 @@ describe("soundFileTTS", () => {
     process.env.SOUNDS_FOLDER = "custom-sounds"
     const result = soundFileTTS("Exalted Orb")
     expect(result).toBe("custom-sounds/Exalted_Orb.mp3")
+  })
+})
+
+describe("manifestSoundFile", () => {
+  it("returns path based on entry id", () => {
+    const result = manifestSoundFile({ id: "chaos_orb", text: "Chaos Orb" })
+    expect(result).toBe(`${V2_FOLDER}/chaos_orb.mp3`)
+  })
+
+  it("respects SOUNDS_FOLDER override", () => {
+    process.env.SOUNDS_FOLDER = "custom-sounds"
+    const result = manifestSoundFile({ id: "exalted_orb", text: "Exalted Orb" })
+    expect(result).toBe("custom-sounds/exalted_orb.mp3")
   })
 })

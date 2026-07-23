@@ -1,5 +1,6 @@
 import path from "path"
 import type { SoundFile } from "../types/sounds/generated-sounds"
+import type { SoundManifestEntry } from "./manifest"
 
 export const SOUND_PACK_SOURCE_DIR = "sounds"
 export const SOUND_PACK_TARGET_DIR_V1 = "poeft-sounds"
@@ -21,6 +22,10 @@ export function soundFile(file: SoundFile | string): string {
 
 export function soundFileTTS(file: string): string {
   return `${getSoundPackFolder()}/${generatedSoundTextToFileName(file)}`
+}
+
+export function manifestSoundFile(entry: SoundManifestEntry): string {
+  return `${getSoundPackFolder()}/${entry.id}.mp3`
 }
 
 export function generatedSoundTextToFileName(text: string): string {

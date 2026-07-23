@@ -79,7 +79,7 @@ function discoverTtsEntries(): TtsEntry[] {
   const entries: TtsEntry[] = []
 
   for (const entry of SOUND_MANIFEST) {
-    const filename = generatedSoundTextToFileName(entry.text)
+    const filename = `${entry.id}.mp3`
     if (!seen.has(filename)) {
       seen.add(filename)
       entries.push({ text: entry.text, filename, source: "manifest" })

@@ -43,8 +43,11 @@ export async function clean(): Promise<void> {
     return
   }
 
+  const manifestIds = new Set(SOUND_MANIFEST.map((e) => `${e.id}.mp3`))
   const referencedTexts = discoverReferencedTexts()
-  const validNames = new Set(Array.from(referencedTexts).map((t) => t.split(" ").join("_") + ".mp3"))
+  const adHocTexts = Array.from(referencedTexts).filter((t) => !SOUND_MANIFEST.some((e) => e.text === t))
+  const adHocNames = new Set(adHocTexts.map((t) => t.split(" ").join("_") + ".mp3"))
+  const validNames = new Set([...manifestIds, ...adHocNames])
 
   const files = fs.readdirSync(soundDir)
   let removedCount = 0
