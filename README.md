@@ -92,7 +92,7 @@ SOUNDS_FOLDER="sounds"
 You can regenerate sound filename typings with:
 
 ```bash
-npm run generate-sounds
+npm run generate-sound-types
 ```
 
 And you can sync the actual sound files into your Path of Exile folder with:
@@ -107,7 +107,7 @@ Run these commands when you want to refresh generated files after changing local
 
 ```bash
 npm run generate-types
-npm run generate-sounds
+npm run generate-sound-types
 ```
 
 ## Notes
