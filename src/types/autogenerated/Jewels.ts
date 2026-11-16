@@ -7,4 +7,5 @@ export type Jewels =
   | "Large Cluster Jewel"
   | "Medium Cluster Jewel"
   | "Small Cluster Jewel"
+  | "Mycelium Core"
   | (string & {})
